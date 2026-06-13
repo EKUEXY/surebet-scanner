@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SureBet Scanner · Ontario</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #080f0b;
+  --surface: #0e1a12;
+  --card: #121f16;
+  --border: rgba(52,211,153,0.12);
+  --border-bright: rgba(52,211,153,0.35);
+  --green: #34d399;
+  --green-dim: #1a6645;
+  --gold: #fbbf24;
+  --red: #f87171;
+  --blue: #60a5fa;
+  --white: #f0f4f1;
+  --muted: #6b7f72;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── SETUP SCREEN ── */
+#setup-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(52,211,153,0.06) 0%, transparent 70%);
+}
+
+.setup-box {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--border-bright);
+  border-radius: 10px;
+  padding: 36px 32px;
+}
+
+.setup-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 24px;
+}
+
+.setup-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.setup-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 7px;
+}
+
+.key-input-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.key-input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border-bright);
+  color: var(--white);
+  padding: 12px 44px 12px 14px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+  letter-spacing: 0.5px;
+}
+.key-input:focus { border-color: var(--green); }
+
+.eye-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+}
+.eye-btn:hover { color: var(--white); }
+
+.setup-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.field-group { display: flex; flex-direction: column; }
+
+.field-input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+.field-input:focus { border-color: var(--green); }
+
+.connect-btn {
+  width: 100%;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  padding: 14px;
+  border-radius: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.connect-btn:hover { background: #2fb882; transform: translateY(-1px); }
+.connect-btn:disabled { background: var(--green-dim); color: var(--muted); cursor: not-allowed; transform: none; }
+
+.setup-note {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 16px;
+  line-height: 1.6;
+}
+
+.error-msg {
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3);
+  color: var(--red);
+  padding: 10px 14px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ── MAIN APP ── */
+#app { display: none; min-height: 100vh; flex-direction: column; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--green);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.status-dot.live { background: var(--green); animation: blink 1.5s infinite; }
+.status-dot.loading { background: var(--gold); animation: blink 0.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.countdown-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.settings-btn, .logout-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.settings-btn:hover, .logout-btn:hover { border-color: var(--border-bright); color: var(--white); }
+
+/* STATS BAR */
+.statsbar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.stat-cell {
+  padding: 14px 20px;
+  border-right: 1px solid var(--border);
+}
+.stat-cell:last-child { border-right: none; }
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--white);
+}
+.stat-value.green { color: var(--green); }
+.stat-value.gold { color: var(--gold); }
+
+/* TABS */
+.tabs {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  padding: 11px 22px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.tab.active { color: var(--green); border-bottom-color: var(--green); }
+.tab:hover:not(.active) { color: var(--white); }
+
+.tab-badge {
+  display: inline-block;
+  background: var(--green);
+  color: var(--bg);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* MAIN CONTENT */
+.main { padding: 20px; flex: 1; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ALERT TOAST */
+.toast-container {
+  position: fixed;
+  top: 64px;
+  right: 16px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.toast {
+  background: var(--card);
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  padding: 14px 16px;
+  animation: slideIn 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+@keyframes slideIn { from { transform: translateX(100%); opacity:0 } to { transform: translateX(0); opacity:1 } }
+
+.toast-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.toast-body { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.toast-roi { font-size: 18px; font-weight: 700; color: var(--gold); }
+
+/* SUREBET CARDS */
+.surebets-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+.filter-select {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
+.refresh-btn {
+  background: var(--card);
+  border: 1px solid var(--border-bright);
+  color: var(--green);
+  padding: 6px 14px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.refresh-btn:hover { background: rgba(52,211,153,0.1); }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; color: var(--white); margin-bottom: 8px; }
+.empty-sub { font-size: 13px; line-height: 1.6; }
+
+.surebet-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.surebet-card:hover { border-color: var(--border-bright); }
+.surebet-card.hot { border-color: rgba(251,191,36,0.4); }
+
+.card-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card-match {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.card-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.roi-badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  padding: 4px 14px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.roi-badge.hot { background: rgba(251,191,36,0.15); color: var(--gold); border: 1px solid rgba(251,191,36,0.3); }
+.roi-badge.good { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.25); }
+
+.card-body {
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.leg {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.leg-outcome {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.leg-book {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+.leg-odd {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--white);
+}
+
+.leg-stake {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  margin-top: 4px;
+}
+
+.card-footer {
+  padding: 10px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profit-display {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+/* SETTINGS PANEL */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 600px;
+}
+
+@media(max-width:500px) { .settings-grid { grid-template-columns: 1fr; } }
+
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.settings-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+
+.setting-row {
+  margin-bottom: 14px;
+}
+
+.save-btn {
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.2s;
+  grid-column: 1/-1;
+}
+.save-btn:hover { background: #2fb882; }
+
+/* HISTORY PANEL */
+.history-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.export-btn {
+  background: var(--card);
+  border: 1px solid var(--border-bright);
+  color: var(--green);
+  padding: 7px 16px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+}
+.export-btn:hover { background: rgba(52,211,153,0.1); }
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.history-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.history-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.history-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.roi-chip {
+  background: rgba(52,211,153,0.12);
+  color: var(--green);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+.roi-chip.hot { background: rgba(251,191,36,0.12); color: var(--gold); }
+
+/* BANKROLL PANEL */
+.bankroll-wrap { max-width: 560px; }
+
+.bankroll-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.bankroll-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--green);
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.calc-result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.result-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+
+.result-tile-label { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.result-tile-value { font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 900; }
+.result-tile-value.green { color: var(--green); }
+.result-tile-value.gold { color: var(--gold); }
+
+.calc-action-btn {
+  width: 100%;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  padding: 11px;
+  border-radius: 5px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.calc-action-btn:hover { background: #2fb882; }
+
+/* SECTION LABEL */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* LOADING OVERLAY */
+.loading-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), var(--gold), var(--green));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+  display: none;
+}
+.loading-bar.show { display: block; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+footer {
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  line-height: 1.7;
+}
+
+@media(max-width:600px) {
+  .statsbar { grid-template-columns: 1fr 1fr; }
+  .stat-cell { border-right: none; border-bottom: 1px solid var(--border); }
+  .card-body { grid-template-columns: 1fr; }
+  .topbar-right .countdown-pill { display: none; }
+  .input-row { grid-template-columns: 1fr; }
+  .calc-result-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ SETUP SCREEN -->
+<div id="setup-screen">
+  <div class="setup-box">
+    <div class="setup-logo">⚽ SureBet Scanner · Ontario</div>
+    <div class="setup-title">Configurez votre scanner</div>
+    <div class="setup-sub">Entrez votre clé API The Odds API. Elle sera sauvegardée uniquement dans votre navigateur et jamais partagée.</div>
+
+    <div class="error-msg" id="error-msg">❌ Clé API invalide. Vérifiez votre dashboard The Odds API.</div>
+
+    <label class="field-label">Clé API The Odds API</label>
+    <div class="key-input-wrap">
+      <input type="password" class="key-input" id="api-key-input" placeholder="Collez votre clé ici..." autocomplete="off">
+      <button class="eye-btn" onclick="toggleKey()" title="Afficher/masquer">👁</button>
+    </div>
+
+    <div class="setup-settings">
+      <div class="field-group">
+        <label class="field-label">ROI minimum (%)</label>
+        <input type="number" class="field-input" id="setup-roi" value="1" min="0.1" max="20" step="0.1">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Bankroll ($CAD)</label>
+        <input type="number" class="field-input" id="setup-bankroll" value="1000" min="10">
+      </div>
+    </div>
+
+    <button class="connect-btn" id="connect-btn" onclick="connect()">🔌 Connecter et lancer</button>
+    <div class="setup-note">🔒 Clé stockée localement · Jamais envoyée à un tiers · Refresh toutes les 90 min</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ MAIN APP -->
+<div id="app">
+  <div class="loading-bar" id="loading-bar"></div>
+
+  <div class="topbar">
+    <div class="app-logo">⚽ SureBet</div>
+    <div class="topbar-right">
+      <div class="status-pill">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Initialisation</span>
+      </div>
+      <div class="countdown-pill">⏱ <span id="countdown">90:00</span></div>
+      <button class="settings-btn" onclick="showTab('settings')">⚙️</button>
+      <button class="logout-btn" onclick="logout()" title="Déconnecter">✕</button>
+    </div>
+  </div>
+
+  <div class="statsbar">
+    <div class="stat-cell">
+      <div class="stat-label">Surebets actifs</div>
+      <div class="stat-value green" id="stat-active">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Meilleur ROI</div>
+      <div class="stat-value gold" id="stat-best-roi">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Bookmakers</div>
+      <div class="stat-value" id="stat-books">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Matchs scannés</div>
+      <div class="stat-value" id="stat-games">—</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('surebets')">Surebets <span class="tab-badge" id="badge-count">0</span></div>
+    <div class="tab" onclick="showTab('bankroll')">Calculateur</div>
+    <div class="tab" onclick="showTab('history')">Historique <span class="tab-badge" id="badge-history">0</span></div>
+    <div class="tab" onclick="showTab('settings')">Paramètres</div>
+  </div>
+
+  <div class="main">
+
+    <!-- SUREBETS TAB -->
+    <div class="panel active" id="panel-surebets">
+      <div class="surebets-header">
+        <div class="section-label" style="margin-bottom:0;flex:1">Opportunités détectées</div>
+        <div class="filter-bar">
+          <span class="filter-label">Sport:</span>
+          <select class="filter-select" id="sport-filter" onchange="renderSurebets()">
+            <option value="all">Tous</option>
+            <option value="soccer">Football ⚽</option>
+            <option value="basketball">Basketball 🏀</option>
+            <option value="americanfootball">Football américain 🏈</option>
+            <option value="icehockey">Hockey 🏒</option>
+          </select>
+          <button class="refresh-btn" onclick="fetchOdds(true)">↻ Actualiser</button>
+        </div>
+      </div>
+      <div id="surebets-list" style="margin-top:16px"></div>
+    </div>
+
+    <!-- BANKROLL TAB -->
+    <div class="panel" id="panel-bankroll">
+      <div class="bankroll-wrap">
+        <div class="section-label">Calculateur de mise optimale</div>
+        <div class="bankroll-card">
+          <div class="bankroll-title">Paramètres</div>
+          <div class="setting-row">
+            <label class="field-label">Bankroll disponible ($CAD)</label>
+            <input type="number" class="field-input" id="bk-bankroll" value="1000" style="width:100%">
+          </div>
+          <div class="input-row">
+            <div>
+              <label class="field-label">Cote résultat 1</label>
+              <input type="number" class="field-input" id="bk-odd1" value="2.10" step="0.01" min="1.01">
+            </div>
+            <div>
+              <label class="field-label">Cote résultat 2</label>
+              <input type="number" class="field-input" id="bk-odd2" value="2.05" step="0.01" min="1.01">
+            </div>
+          </div>
+          <div class="setting-row">
+            <label class="field-label">Cote résultat 3 (nul — optionnel)</label>
+            <input type="number" class="field-input" id="bk-odd3" value="" step="0.01" min="1.01" placeholder="Laisser vide si 2 issues" style="width:100%">
+          </div>
+          <button class="calc-action-btn" onclick="calcBankroll()">Calculer les mises</button>
+
+          <div class="calc-result-grid" id="bk-result" style="display:none">
+            <div class="result-tile">
+              <div class="result-tile-label">Mise 1</div>
+              <div class="result-tile-value green" id="bk-s1">—</div>
+            </div>
+            <div class="result-tile">
+              <div class="result-tile-label">Mise 2</div>
+              <div class="result-tile-value green" id="bk-s2">—</div>
+            </div>
+            <div class="result-tile" id="bk-tile3" style="display:none">
+              <div class="result-tile-label">Mise 3</div>
+              <div class="result-tile-value green" id="bk-s3">—</div>
+            </div>
+            <div class="result-tile">
+              <div class="result-tile-label">ROI garanti</div>
+              <div class="result-tile-value gold" id="bk-roi">—</div>
+            </div>
+            <div class="result-tile">
+              <div class="result-tile-label">Profit garanti</div>
+              <div class="result-tile-value gold" id="bk-profit">—</div>
+            </div>
+            <div class="result-tile" style="grid-column:1/-1">
+              <div class="result-tile-label">Retour garanti (peu importe le résultat)</div>
+              <div class="result-tile-value green" id="bk-return">—</div>
+            </div>
+          </div>
+          <div id="bk-no-arb" style="display:none;margin-top:14px;color:var(--red);font-size:13px;">
+            ⚠️ Ces cotes ne forment pas un surebet (somme des inverses ≥ 1).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div class="panel" id="panel-history">
+      <div class="history-controls">
+        <div class="section-label" style="margin-bottom:0;flex:1">Opportunités détectées</div>
+        <button class="export-btn" onclick="exportCSV()">⬇ Exporter CSV</button>
+        <button class="export-btn" style="border-color:rgba(248,113,113,0.4);color:var(--red)" onclick="clearHistory()">🗑 Vider</button>
+      </div>
+      <div id="history-content"></div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="panel" id="panel-settings">
+      <div class="section-label">Paramètres</div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <div class="settings-card-title">🎯 Filtres</div>
+          <div class="setting-row">
+            <label class="field-label">ROI minimum (%)</label>
+            <input type="number" class="field-input" id="set-roi" step="0.1" min="0.1" max="20" style="width:100%">
+          </div>
+          <div class="setting-row">
+            <label class="field-label">ROI "Hot" (badge or) (%)</label>
+            <input type="number" class="field-input" id="set-hot-roi" step="0.1" min="1" style="width:100%">
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">💰 Bankroll</div>
+          <div class="setting-row">
+            <label class="field-label">Bankroll ($CAD)</label>
+            <input type="number" class="field-input" id="set-bankroll" min="10" style="width:100%">
+          </div>
+          <div class="setting-row">
+            <label class="field-label">% max par surebet</label>
+            <input type="number" class="field-input" id="set-pct" value="100" min="1" max="100" style="width:100%">
+          </div>
+        </div>
+        <div class="settings-card" style="grid-column:1/-1">
+          <div class="settings-card-title">🔑 Clé API</div>
+          <div class="setting-row">
+            <label class="field-label">The Odds API Key</label>
+            <div class="key-input-wrap" style="margin-bottom:0">
+              <input type="password" class="key-input" id="set-apikey" style="background:var(--surface)">
+              <button class="eye-btn" onclick="toggleSetKey()">👁</button>
+            </div>
+          </div>
+        </div>
+        <button class="save-btn" onclick="saveSettings()">✅ Sauvegarder les paramètres</button>
+      </div>
+    </div>
+
+  </div><!-- end .main -->
+
+  <footer>
+    SureBet Scanner · iGaming Ontario · Refresh automatique toutes les 90 min · 
+    Jouer comporte des risques · Aide : 1-866-531-2600 (ConnexOntario)
+  </footer>
+</div><!-- end #app -->
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let CFG = {
+  apiKey: '',
+  minRoi: 1.0,
+  hotRoi: 3.0,
+  bankroll: 1000,
+  maxPct: 100,
+};
+
+let STATE = {
+  surebets: [],
+  history: [],
+  allOdds: [],
+  booksCount: 0,
+  gamesCount: 0,
+  lastFetch: null,
+  countdownInterval: null,
+  refreshInterval: null,
+  secondsLeft: 5400, // 90 min
+};
+
+const REFRESH_SEC = 5400; // 90 minutes
+
+// ══════════════════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════════════════
+function toggleKey() {
+  const inp = document.getElementById('api-key-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+function toggleSetKey() {
+  const inp = document.getElementById('set-apikey');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function connect() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key || key.length < 20) {
+    showError('Entrez une clé API valide.'); return;
+  }
+  CFG.apiKey = key;
+  CFG.minRoi = parseFloat(document.getElementById('setup-roi').value) || 1.0;
+  CFG.bankroll = parseFloat(document.getElementById('setup-bankroll').value) || 1000;
+
+  const btn = document.getElementById('connect-btn');
+  btn.disabled = true;
+  btn.textContent = 'Connexion…';
+
+  // Test the key
+  try {
+    const res = await fetch(`https://api.the-odds-api.com/v4/sports/?apiKey=${CFG.apiKey}`);
+    if (!res.ok) throw new Error('invalid');
+    // Save to localStorage
+    localStorage.setItem('sb_cfg', JSON.stringify(CFG));
+    launchApp();
+  } catch(e) {
+    showError('Clé API invalide ou réseau inaccessible. Vérifiez votre clé.');
+    btn.disabled = false;
+    btn.textContent = '🔌 Connecter et lancer';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+}
+
+function launchApp() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('app').style.flexDirection = 'column';
+
+  // Load history
+  const h = localStorage.getItem('sb_history');
+  if (h) STATE.history = JSON.parse(h);
+
+  // Populate settings
+  document.getElementById('set-roi').value = CFG.minRoi;
+  document.getElementById('set-hot-roi').value = CFG.hotRoi;
+  document.getElementById('set-bankroll').value = CFG.bankroll;
+  document.getElementById('set-pct').value = CFG.maxPct;
+  document.getElementById('set-apikey').value = CFG.apiKey;
+  document.getElementById('bk-bankroll').value = CFG.bankroll;
+
+  renderHistory();
+  fetchOdds(false);
+  startCountdown();
+}
+
+function logout() {
+  if (!confirm('Déconnecter et effacer la clé sauvegardée ?')) return;
+  localStorage.removeItem('sb_cfg');
+  clearInterval(STATE.countdownInterval);
+  clearInterval(STATE.refreshInterval);
+  location.reload();
+}
+
+// ══════════════════════════════════════════════════════════
+// FETCH & SCAN
+// ══════════════════════════════════════════════════════════
+const SPORTS = [
+  'soccer_epl','soccer_france_ligue_one','soccer_germany_bundesliga',
+  'soccer_italy_serie_a','soccer_spain_la_liga','soccer_uefa_champs_league',
+  'soccer_usa_mls','soccer_canada_mls',
+  'basketball_nba','icehockey_nhl',
+  'americanfootball_nfl',
+];
+
+async function fetchOdds(manual = false) {
+  setStatus('loading', 'Scan en cours…');
+  document.getElementById('loading-bar').classList.add('show');
+
+  let allOdds = [];
+  let books = new Set();
+  let games = 0;
+
+  for (const sport of SPORTS) {
+    try {
+      const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${CFG.apiKey}&regions=us,eu,uk,au&markets=h2h&oddsFormat=decimal&dateFormat=iso`;
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const data = await res.json();
+      games += data.length;
+      for (const game of data) {
+        for (const bm of game.bookmakers) books.add(bm.key);
+        allOdds.push({ sport, game });
+      }
+    } catch(e) { /* skip sport */ }
+  }
+
+  STATE.allOdds = allOdds;
+  STATE.booksCount = books.size;
+  STATE.gamesCount = games;
+  STATE.lastFetch = new Date();
+
+  const surebets = detectSurebets(allOdds);
+  const newOnes = surebets.filter(sb =>
+    !STATE.history.find(h => h.id === sb.id)
+  );
+
+  STATE.surebets = surebets;
+
+  // Add new surebets to history
+  for (const sb of newOnes) {
+    STATE.history.unshift({ ...sb, detectedAt: new Date().toISOString() });
+    showToast(sb);
+  }
+  if (newOnes.length > 0) {
+    STATE.history = STATE.history.slice(0, 200);
+    localStorage.setItem('sb_history', JSON.stringify(STATE.history));
+  }
+
+  updateStats();
+  renderSurebets();
+  renderHistory();
+
+  setStatus('live', `Dernière MAJ: ${STATE.lastFetch.toLocaleTimeString('fr-CA')}`);
+  document.getElementById('loading-bar').classList.remove('show');
+
+  // Reset countdown
+  STATE.secondsLeft = REFRESH_SEC;
+
+  if (manual) showToast({ matchName: 'Actualisation manuelle', roi: null, sport: 'info' });
+}
+
+function detectSurebets(allOdds) {
+  const results = [];
+  const sportFilter = document.getElementById('sport-filter')?.value || 'all';
+
+  for (const { sport, game } of allOdds) {
+    if (sportFilter !== 'all' && !sport.includes(sportFilter)) continue;
+
+    const bookmakers = game.bookmakers;
+    if (bookmakers.length < 2) continue;
+
+    // Collect best odd per outcome across all bookmakers
+    const bestOdds = {}; // outcome -> { odd, book }
+
+    for (const bm of bookmakers) {
+      for (const market of bm.markets) {
+        if (market.key !== 'h2h') continue;
+        for (const outcome of market.outcomes) {
+          const key = outcome.name;
+          if (!bestOdds[key] || outcome.price > bestOdds[key].odd) {
+            bestOdds[key] = { odd: outcome.price, book: bm.title };
+          }
+        }
+      }
+    }
+
+    const outcomes = Object.entries(bestOdds);
+    if (outcomes.length < 2) continue;
+
+    const arbSum = outcomes.reduce((s, [, v]) => s + 1/v.odd, 0);
+    if (arbSum >= 1) continue; // No arbitrage
+
+    const roi = ((1/arbSum - 1) * 100);
+    if (roi < CFG.minRoi) continue;
+
+    // Calculate stakes for bankroll
+    const stakeTotal = CFG.bankroll * (CFG.maxPct / 100);
+    const legs = outcomes.map(([name, v]) => ({
+      outcome: name,
+      odd: v.odd,
+      book: v.book,
+      stake: +((stakeTotal / (arbSum * v.odd))).toFixed(2),
+    }));
+
+    const guaranteedReturn = +(stakeTotal / arbSum).toFixed(2);
+    const profit = +(guaranteedReturn - stakeTotal).toFixed(2);
+
+    results.push({
+      id: `${game.id}-${Date.now()}`,
+      matchName: `${game.home_team} vs ${game.away_team}`,
+      sport,
+      commenceTime: game.commence_time,
+      roi: +roi.toFixed(2),
+      arbSum: +arbSum.toFixed(4),
+      legs,
+      stakeTotal: +stakeTotal.toFixed(2),
+      guaranteedReturn,
+      profit,
+      booksCount: bookmakers.length,
+    });
+  }
+
+  return results.sort((a, b) => b.roi - a.roi);
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════
+function renderSurebets() {
+  const list = document.getElementById('surebets-list');
+  const sportFilter = document.getElementById('sport-filter')?.value || 'all';
+
+  let sbs = STATE.surebets;
+  if (sportFilter !== 'all') sbs = sbs.filter(sb => sb.sport.includes(sportFilter));
+
+  document.getElementById('badge-count').textContent = sbs.length;
+
+  if (sbs.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">Aucun surebet détecté</div>
+      <div class="empty-sub">ROI minimum: ${CFG.minRoi}% · ${STATE.gamesCount} matchs scannés · ${STATE.booksCount} bookmakers<br>
+      L'app actualise automatiquement toutes les 90 minutes.</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = sbs.map(sb => {
+    const isHot = sb.roi >= CFG.hotRoi;
+    const time = sb.commenceTime ? new Date(sb.commenceTime).toLocaleString('fr-CA', {dateStyle:'short',timeStyle:'short'}) : '';
+    return `<div class="surebet-card ${isHot?'hot':''}">
+      <div class="card-header">
+        <div>
+          <div class="card-match">${sb.matchName}</div>
+          <div class="card-meta">${sportLabel(sb.sport)} · ${time} · ${sb.booksCount} bookmakers</div>
+        </div>
+        <div class="roi-badge ${isHot?'hot':'good'}">ROI ${sb.roi}%</div>
+      </div>
+      <div class="card-body">
+        ${sb.legs.map(leg => `
+          <div class="leg">
+            <div class="leg-outcome">${leg.outcome}</div>
+            <div class="leg-book">${leg.book}</div>
+            <div class="leg-odd">${leg.odd.toFixed(2)}</div>
+            <div class="leg-stake">Mise: $${leg.stake}</div>
+          </div>`).join('')}
+      </div>
+      <div class="card-footer">
+        <span>Bankroll utilisée: <strong>$${sb.stakeTotal}</strong></span>
+        <span class="profit-display">Profit garanti: +$${sb.profit} CAD</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderHistory() {
+  const h = STATE.history;
+  document.getElementById('badge-history').textContent = h.length;
+
+  if (h.length === 0) {
+    document.getElementById('history-content').innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">Aucun historique</div>
+      <div class="empty-sub">Les surebets détectés apparaîtront ici.</div>
+    </div>`;
+    return;
+  }
+
+  document.getElementById('history-content').innerHTML = `
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Match</th>
+          <th>Sport</th>
+          <th>ROI</th>
+          <th>Profit</th>
+          <th>Détecté</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${h.map(sb => `<tr>
+          <td>${sb.matchName || '—'}</td>
+          <td>${sportLabel(sb.sport || '')}</td>
+          <td><span class="roi-chip ${(sb.roi||0)>=CFG.hotRoi?'hot':''}">${sb.roi||0}%</span></td>
+          <td style="color:var(--green)">+$${sb.profit||0}</td>
+          <td style="color:var(--muted)">${sb.detectedAt ? new Date(sb.detectedAt).toLocaleString('fr-CA',{dateStyle:'short',timeStyle:'short'}) : '—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// BANKROLL CALC
+// ══════════════════════════════════════════════════════════
+function calcBankroll() {
+  const bankroll = parseFloat(document.getElementById('bk-bankroll').value) || 0;
+  const o1 = parseFloat(document.getElementById('bk-odd1').value) || 0;
+  const o2 = parseFloat(document.getElementById('bk-odd2').value) || 0;
+  const o3str = document.getElementById('bk-odd3').value.trim();
+  const o3 = o3str ? parseFloat(o3str) : null;
+
+  const odds = o3 ? [o1, o2, o3] : [o1, o2];
+  const arbSum = odds.reduce((s, o) => s + 1/o, 0);
+
+  document.getElementById('bk-result').style.display = 'none';
+  document.getElementById('bk-no-arb').style.display = 'none';
+  document.getElementById('bk-tile3').style.display = 'none';
+
+  if (arbSum >= 1) {
+    document.getElementById('bk-no-arb').style.display = 'block';
+    return;
+  }
+
+  const stakes = odds.map(o => +(bankroll / (arbSum * o)).toFixed(2));
+  const ret = +(bankroll / arbSum).toFixed(2);
+  const roi = +((1/arbSum - 1)*100).toFixed(2);
+  const profit = +(ret - bankroll).toFixed(2);
+
+  document.getElementById('bk-s1').textContent = '$' + stakes[0];
+  document.getElementById('bk-s2').textContent = '$' + stakes[1];
+  if (o3) {
+    document.getElementById('bk-s3').textContent = '$' + stakes[2];
+    document.getElementById('bk-tile3').style.display = 'block';
+  }
+  document.getElementById('bk-roi').textContent = roi + '%';
+  document.getElementById('bk-profit').textContent = '+$' + profit;
+  document.getElementById('bk-return').textContent = '$' + ret + ' CAD garanti';
+  document.getElementById('bk-result').style.display = 'grid';
+}
+
+// ══════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════
+function saveSettings() {
+  CFG.minRoi = parseFloat(document.getElementById('set-roi').value) || 1.0;
+  CFG.hotRoi = parseFloat(document.getElementById('set-hot-roi').value) || 3.0;
+  CFG.bankroll = parseFloat(document.getElementById('set-bankroll').value) || 1000;
+  CFG.maxPct = parseFloat(document.getElementById('set-pct').value) || 100;
+  const newKey = document.getElementById('set-apikey').value.trim();
+  if (newKey) CFG.apiKey = newKey;
+
+  document.getElementById('bk-bankroll').value = CFG.bankroll;
+  localStorage.setItem('sb_cfg', JSON.stringify(CFG));
+
+  showToast({ matchName: 'Paramètres sauvegardés ✅', roi: null, sport: 'info' });
+  renderSurebets();
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════════════
+function exportCSV() {
+  if (STATE.history.length === 0) { alert('Aucun historique à exporter.'); return; }
+  const rows = [['Match','Sport','ROI (%)','Profit ($CAD)','Détecté le']];
+  for (const sb of STATE.history) {
+    rows.push([
+      `"${sb.matchName||''}"`,
+      sportLabel(sb.sport||''),
+      sb.roi||0,
+      sb.profit||0,
+      sb.detectedAt ? new Date(sb.detectedAt).toLocaleString('fr-CA') : '',
+    ]);
+  }
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `surebets_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function clearHistory() {
+  if (!confirm('Effacer tout l\'historique ?')) return;
+  STATE.history = [];
+  localStorage.removeItem('sb_history');
+  renderHistory();
+}
+
+// ══════════════════════════════════════════════════════════
+// COUNTDOWN & AUTO REFRESH
+// ══════════════════════════════════════════════════════════
+function startCountdown() {
+  STATE.secondsLeft = REFRESH_SEC;
+  STATE.countdownInterval = setInterval(() => {
+    STATE.secondsLeft--;
+    if (STATE.secondsLeft <= 0) {
+      STATE.secondsLeft = REFRESH_SEC;
+      fetchOdds(false);
+    }
+    const m = String(Math.floor(STATE.secondsLeft/60)).padStart(2,'0');
+    const s = String(STATE.secondsLeft%60).padStart(2,'0');
+    document.getElementById('countdown').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+// ══════════════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════════════
+function setStatus(state, text) {
+  const dot = document.getElementById('status-dot');
+  dot.className = 'status-dot ' + state;
+  document.getElementById('status-text').textContent = text;
+}
+
+function updateStats() {
+  document.getElementById('stat-active').textContent = STATE.surebets.length;
+  document.getElementById('stat-best-roi').textContent = STATE.surebets.length
+    ? STATE.surebets[0].roi + '%' : '—';
+  document.getElementById('stat-books').textContent = STATE.booksCount || '—';
+  document.getElementById('stat-games').textContent = STATE.gamesCount || '—';
+}
+
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  // highlight tab
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.getAttribute('onclick') === `showTab('${id}')`) t.classList.add('active');
+  });
+}
+
+function showToast(sb) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  if (sb.roi === null) {
+    toast.innerHTML = `<div class="toast-title">${sb.matchName}</div>`;
+  } else {
+    toast.innerHTML = `
+      <div class="toast-title">🎯 Surebet détecté !</div>
+      <div class="toast-body">${sb.matchName}<br>
+      ROI: <span class="toast-roi">${sb.roi}%</span> · Profit: +$${sb.profit}</div>`;
+  }
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
+
+function sportLabel(sport) {
+  if (sport.includes('soccer')) return '⚽ Football';
+  if (sport.includes('basketball')) return '🏀 Basketball';
+  if (sport.includes('icehockey')) return '🏒 Hockey';
+  if (sport.includes('americanfootball')) return '🏈 NFL';
+  if (sport === 'info') return 'ℹ️';
+  return sport;
+}
+
+// ══════════════════════════════════════════════════════════
+// AUTO-LOAD SAVED CONFIG
+// ══════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('sb_cfg');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.apiKey && parsed.apiKey.length > 20) {
+        Object.assign(CFG, parsed);
+        document.getElementById('api-key-input').value = CFG.apiKey;
+        document.getElementById('setup-roi').value = CFG.minRoi;
+        document.getElementById('setup-bankroll').value = CFG.bankroll;
+        // Auto-launch
+        launchApp();
+        return;
+      }
+    } catch(e) {}
+  }
+});
+</script>
+</body>
+</html>
