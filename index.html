@@ -615,21 +615,30 @@ const REGIONS='us,eu,uk,au,ca';
 function tgEye(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
 
 async function connect(){
-  const key=document.getElementById('k').value.trim();
-  if(!key||key.length<20){showErr('Clé API invalide.');return;}
-  C.apiKey=key;
-  C.minRoi=parseFloat(document.getElementById('sr').value)||1;
-  C.bankroll=parseFloat(document.getElementById('sb2').value)||1000;
-  C.refreshSec=parseInt(document.getElementById('srf').value)||90;
-  const btn=document.getElementById('cbtn');
-  btn.disabled=true;btn.textContent='Vérification…';
   try{
-    const r=await fetch(`https://api.the-odds-api.com/v4/sports/?apiKey=${C.apiKey}`);
-    if(!r.ok)throw 0;
-    saveC();launchApp();
-  }catch{
-    showErr('Clé invalide. Vérifiez votre dashboard The Odds API.');
-    btn.disabled=false;btn.textContent='⚡ Connecter et lancer';
+    const key=document.getElementById('k').value.trim();
+    if(!key||key.length<20){showErr('Clé API invalide ou trop courte.');return;}
+    C.apiKey=key;
+    C.minRoi=parseFloat(document.getElementById('sr').value)||1;
+    C.bankroll=parseFloat(document.getElementById('sb2').value)||1000;
+    C.refreshSec=parseInt(document.getElementById('srf').value)||90;
+    const btn=document.getElementById('cbtn');
+    btn.disabled=true;btn.textContent='Vérification…';
+    let ok=false;
+    try{
+      const r=await fetch('https://api.the-odds-api.com/v4/sports/?apiKey='+C.apiKey);
+      ok=r.ok;
+    }catch(e){ok=false;}
+    if(ok){
+      saveC();launchApp();
+    }else{
+      showErr('Clé invalide ou réseau inaccessible. Vérifiez votre dashboard.');
+      btn.disabled=false;btn.textContent='⚡ Connecter et lancer';
+    }
+  }catch(e){
+    showErr('Erreur inattendue: '+e.message);
+    document.getElementById('cbtn').disabled=false;
+    document.getElementById('cbtn').textContent='⚡ Connecter et lancer';
   }
 }
 function showErr(m){const e=document.getElementById('err');e.textContent='❌ '+m;e.style.display='block';}
@@ -644,8 +653,7 @@ function launchApp(){
   // Restore persisted data
   try{const h=localStorage.getItem('sbhv31');if(h)S.hist=JSON.parse(h);}catch{}
   try{const f=localStorage.getItem('sbfav');if(f)FAV=new Set(JSON.parse(f));}catch{}
-  try{const ab=localStorage.getItem('sbactive');if(ab)ACTIVE_BM=new Set(JSON.parse(ab));}catch{}
-  else{ACTIVE_BM=new Set(BM_DATA.map(b=>b.k));}
+  try{const ab=localStorage.getItem('sbactive');if(ab)ACTIVE_BM=new Set(JSON.parse(ab));else ACTIVE_BM=new Set(BM_DATA.map(b=>b.k));}catch{ACTIVE_BM=new Set(BM_DATA.map(b=>b.k));}
   try{const rh=localStorage.getItem('sbroi31');if(rh)S.roiHistory=JSON.parse(rh);}catch{}
   try{const vh=localStorage.getItem('sbvol31');if(vh)S.volHistory=JSON.parse(vh);}catch{}
   // Populate settings
@@ -658,9 +666,11 @@ function launchApp(){
   document.getElementById('ss-snd').value=C.sound?'1':'0';
   document.getElementById('ss-key').value=C.apiKey;
   document.getElementById('ck-bk').value=C.bankroll;
-  updSndBtn();renderHist();renderBooks();
-  doFetch(false);
-  startCD();
+  try{updSndBtn();}catch(e){}
+  try{renderHist();}catch(e){}
+  try{renderBooks();}catch(e){}
+  try{doFetch(false);}catch(e){console.error('Fetch error:',e);}
+  try{startCD();}catch(e){}
 }
 function doLogout(){if(!confirm('Déconnecter ?'))return;localStorage.removeItem('sbpv31');clearInterval(S.cdInt);location.reload();}
 
@@ -719,7 +729,12 @@ async function doFetch(manual=false){
   if(S.volHistory.length>24)S.volHistory.shift();
   localStorage.setItem('sbroi31',JSON.stringify(S.roiHistory));
   localStorage.setItem('sbvol31',JSON.stringify(S.volHistory));
-  updStats();updScopeInfo();renderScan();renderHist();renderBooks();updateCharts();
+  try{updStats();}catch(e){}
+  try{updScopeInfo();}catch(e){}
+  try{renderScan();}catch(e){console.error('renderScan:',e);}
+  try{renderHist();}catch(e){}
+  try{renderBooks();}catch(e){}
+  try{updateCharts();}catch(e){}
   // Last update display
   const ts=new Date().toLocaleString('fr-CA',{dateStyle:'short',timeStyle:'medium'});
   document.getElementById('last-update-display').textContent=ts;
@@ -988,7 +1003,7 @@ function drawBar(id,labels,data,color){
     ctx.fillStyle=color+'99';ctx.fillRect(x,y,bw,bh);
     if(v>0){ctx.fillStyle=color;ctx.font='bold 11px Barlow Condensed,sans-serif';ctx.textAlign='center';ctx.fillText(v,x+bw/2,y-3);}
     ctx.fillStyle='#5a7060';ctx.font='9px Inter';ctx.textAlign='center';
-    const lbl=(labels[i]||'').replace(/[🎾🏀⚾🥊⚽🏒🏈🏐]/u,'').trim().substring(0,9);
+    const lbl=((labels[i]||'').replace(/[^\w\s.]/g,'').trim()||labels[i]||'').substring(0,9);
     ctx.fillText(lbl,x+bw/2,H-pb+14);
   });
 }
