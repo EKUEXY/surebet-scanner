@@ -3,81 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SureBet Pro · Ontario</title>
+<title>SureBet Pro v3 · Ontario</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap');
-
-:root {
-  --bg:#07100a; --surface:#0d1a10; --card:#111d14; --card2:#152019;
-  --border:rgba(52,211,153,0.1); --border2:rgba(52,211,153,0.3);
-  --green:#34d399; --green2:#059669; --green-dark:#064e35;
-  --gold:#fbbf24; --gold-dim:rgba(251,191,36,0.15);
-  --red:#f87171; --red-dim:rgba(248,113,113,0.1);
-  --blue:#60a5fa; --orange:#fb923c; --purple:#a78bfa;
-  --white:#eef4f0; --muted:#5a7060; --muted2:#8a9e8f;
+:root{
+  --bg:#07100a;--surface:#0d1a10;--card:#111d14;--card2:#152019;
+  --border:rgba(52,211,153,0.1);--border2:rgba(52,211,153,0.3);
+  --green:#34d399;--green2:#059669;--green-dark:#064e35;
+  --gold:#fbbf24;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa;
+  --white:#eef4f0;--muted:#5a7060;--muted2:#8a9e8f;
   --mono:'JetBrains Mono',monospace;
-  --roi-dark:rgba(4,120,87,0.3); --roi-green:rgba(52,211,153,0.2); --roi-gold:rgba(251,191,36,0.15); --roi-gray:rgba(100,116,139,0.1);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
-body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;}
 
-/* ═══ SETUP ═══ */
-#setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% -10%,rgba(52,211,153,0.08) 0%,transparent 65%);}
-.setup-box{width:100%;max-width:480px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:40px 36px;}
-.setup-brand{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
-.brand-icon{width:36px;height:36px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-.brand-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;}
-.brand-tag{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--green);text-transform:uppercase;}
-.setup-h{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;line-height:1;margin-bottom:6px;}
-.setup-sub{font-size:13px;color:var(--muted2);margin-bottom:32px;line-height:1.6;}
+/* SETUP */
+#setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% -10%,rgba(52,211,153,0.08),transparent 65%);}
+.sbox{width:100%;max-width:500px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:40px 36px;}
+.sbrand{display:flex;align-items:center;gap:12px;margin-bottom:30px;}
+.sicon{width:40px;height:40px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.sname{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;}
+.stag{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--green);text-transform:uppercase;}
+.sh{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;margin-bottom:6px;}
+.ssub{font-size:13px;color:var(--muted2);margin-bottom:32px;line-height:1.6;}
 .fl{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
 .fl label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);}
 .fi{background:var(--card);border:1px solid var(--border);color:var(--white);padding:11px 14px;border-radius:7px;font-size:14px;font-family:'Inter',sans-serif;outline:none;width:100%;transition:border-color .2s;}
 .fi:focus{border-color:var(--green);}
-.fi-pw{position:relative;}
-.fi-pw input{padding-right:42px;}
+.pw{position:relative;}
+.pw input{padding-right:42px;}
 .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted2);cursor:pointer;font-size:15px;}
-.setup-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.srow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 .cta{width:100%;background:var(--green);color:var(--bg);border:none;padding:15px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:4px;}
 .cta:hover{background:#2ecf8a;transform:translateY(-1px);box-shadow:0 6px 20px rgba(52,211,153,0.25);}
-.cta:disabled{background:var(--green-dark);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none;}
-.setup-note{font-size:11px;color:var(--muted2);text-align:center;margin-top:14px;line-height:1.7;}
-.err{background:var(--red-dim);border:1px solid rgba(248,113,113,.3);color:var(--red);padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:16px;display:none;}
+.cta:disabled{background:var(--green-dark);color:var(--muted);cursor:not-allowed;transform:none;}
+.snote{font-size:11px;color:var(--muted2);text-align:center;margin-top:14px;line-height:1.7;}
+.err{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,.3);color:var(--red);padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:16px;display:none;}
 
-/* ═══ APP SHELL ═══ */
+/* APP */
 #app{display:none;flex-direction:column;min-height:100vh;}
 
 /* TOPBAR */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:200;}
-.topbar-left{display:flex;align-items:center;gap:12px;}
-.tlogo{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--green);letter-spacing:.5px;}
-.tlogo span{color:var(--muted2);font-weight:400;}
+.tl{display:flex;align-items:center;gap:10px;}
+.tlogo{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:900;color:var(--green);}
+.tlogo span{color:var(--muted2);font-weight:400;font-size:14px;}
 .vpill{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;color:var(--muted2);}
 .vdot{width:6px;height:6px;border-radius:50%;background:var(--muted);}
-.vdot.on{background:var(--green);animation:pulse 1.8s infinite;}
-.vdot.spin{background:var(--gold);animation:pulse .6s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.topbar-right{display:flex;align-items:center;gap:8px;}
+.vdot.on{background:var(--green);animation:blink 1.8s infinite;}
+.vdot.spin{background:var(--gold);animation:blink .5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tr{display:flex;align-items:center;gap:8px;}
 .tclock{font-family:var(--mono);font-size:11px;color:var(--muted2);background:var(--card);border:1px solid var(--border);padding:4px 9px;border-radius:20px;}
 .ticon{background:none;border:1px solid var(--border);color:var(--muted2);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .ticon:hover{border-color:var(--border2);color:var(--white);}
 
 /* STATSBAR */
 .statsbar{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border-bottom:1px solid var(--border);}
-.sc{padding:12px 16px;border-right:1px solid var(--border);position:relative;}
+.sc{padding:11px 16px;border-right:1px solid var(--border);}
 .sc:last-child{border-right:none;}
-.sc-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.sc-val{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;}
-.sc-val.g{color:var(--green);}
-.sc-val.gold{color:var(--gold);}
-.sc-val.r{color:var(--red);}
-.sc-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.sc-l{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.sc-v{font-family:'Barlow Condensed',sans-serif;font-size:23px;font-weight:900;}
+.sc-v.g{color:var(--green);}
+.sc-v.gold{color:var(--gold);}
+.sc-s{font-size:10px;color:var(--muted);margin-top:1px;}
 
-/* LOADING BAR */
-.lbar{height:2px;background:linear-gradient(90deg,var(--green),var(--gold),var(--green));background-size:200%;animation:shimmer 1.4s linear infinite;display:none;}
+/* LBAR */
+.lbar{height:2px;background:linear-gradient(90deg,var(--green),var(--gold),var(--green));background-size:200%;animation:sh 1.4s linear infinite;display:none;}
 .lbar.on{display:block;}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* TABS */
 .tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
@@ -88,49 +83,59 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font
 .tbadge{display:inline-block;background:var(--green);color:var(--bg);font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;}
 
 /* MAIN */
-.main{padding:16px;flex:1;max-width:1100px;margin:0 auto;width:100%;}
+.main{padding:16px;flex:1;max-width:1200px;margin:0 auto;width:100%;}
 .panel{display:none;}
 .panel.on{display:block;}
 
 /* SPORT PILLS */
-.spills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
-.spill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted2);transition:all .2s;white-space:nowrap;user-select:none;}
+.spills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.spill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted2);transition:all .2s;white-space:nowrap;}
 .spill.on{background:rgba(52,211,153,.12);border-color:var(--green);color:var(--green);}
-.spill:hover:not(.on){border-color:var(--border2);color:var(--white);}
+
+/* ROI QUICK BUTTONS */
+.roi-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.roi-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-right:4px;}
+.rqbtn{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted2);transition:all .2s;background:none;}
+.rqbtn.on{background:rgba(52,211,153,.12);border-color:var(--green);color:var(--green);}
+.rqbtn:hover:not(.on){border-color:var(--border2);color:var(--white);}
 
 /* TOOLBAR */
-.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
-.tbar-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
 .tbar-sel{background:var(--card);border:1px solid var(--border);color:var(--white);padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
-.rbtn{background:var(--card);border:1px solid var(--border2);color:var(--green);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.rbtn{background:var(--card);border:1px solid var(--border2);color:var(--green);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
 .rbtn:hover{background:rgba(52,211,153,.1);}
-.ml-auto{margin-left:auto;}
+.ml{margin-left:auto;}
 
-/* EMPTY */
-.empty{text-align:center;padding:60px 20px;color:var(--muted);}
-.empty-ico{font-size:52px;margin-bottom:16px;}
-.empty-h{font-family:'Barlow Condensed',sans-serif;font-size:24px;color:var(--white);margin-bottom:8px;}
-.empty-s{font-size:13px;line-height:1.7;}
+/* FRESHNESS */
+.fresh{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;}
+.fresh.new{background:rgba(52,211,153,.15);color:var(--green);}
+.fresh.ok{background:rgba(251,191,36,.1);color:var(--gold);}
+.fresh.stale{background:rgba(248,113,113,.1);color:var(--red);}
+
+/* DATA AGE */
+.data-age{font-size:10px;color:var(--muted2);font-style:italic;}
 
 /* SUREBET CARD */
-.sbcard{border-radius:10px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s;}
+.sbcard{border-radius:10px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s;background:var(--card);}
 .sbcard:hover{border-color:var(--border2);}
-.sbcard.roi-dark{border-left:3px solid var(--green2);background:linear-gradient(90deg,rgba(4,120,87,.06) 0%,var(--card) 40%);}
-.sbcard.roi-green{border-left:3px solid var(--green);}
-.sbcard.roi-gold{border-left:3px solid var(--gold);}
-.sbcard.roi-warn{border-left:3px solid rgba(248,113,113,.5);}
-.sbcard .ch{padding:13px 16px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
-.match-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;line-height:1.1;}
-.match-meta{font-size:11px;color:var(--muted2);margin-top:4px;line-height:1.7;}
-.roi-pill{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
-.roi-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;line-height:1;}
-.roi-num.dark{color:#34d399;}
-.roi-num.green{color:var(--green);}
-.roi-num.gold{color:var(--gold);}
-.roi-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);}
+.sbcard.elite{border-left:3px solid var(--green2);background:linear-gradient(90deg,rgba(4,120,87,.07),var(--card) 40%);}
+.sbcard.hot{border-left:3px solid var(--green);}
+.sbcard.std{border-left:3px solid var(--gold);}
+.sbcard.fav-highlight{box-shadow:0 0 0 1px rgba(167,139,250,.4);}
+
+.ch{padding:13px 16px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+.mn{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;}
+.mm{font-size:11px;color:var(--muted2);margin-top:4px;line-height:1.7;}
+.roi-pill{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.rn{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;line-height:1;}
+.rn.elite{color:#34d399;}
+.rn.hot{color:var(--green);}
+.rn.std{color:var(--gold);}
+.rt{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);}
 
 .cb{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .leg{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:11px 13px;}
+.leg.fav-leg{border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.04);}
 .leg-out{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
 .leg-book{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:5px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
 .leg-odd{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;line-height:1;}
@@ -138,27 +143,51 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font
 .leg-ret{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-top:2px;}
 
 .cf{padding:10px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.cf-cell{text-align:center;}
-.cf-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
-.cf-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;}
-.cf-val.g{color:var(--green);}
-.cf-val.gold{color:var(--gold);}
+.cfc{text-align:center;}
+.cfl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.cfv{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;}
+.cfv.g{color:var(--green);}
+.cfv.gold{color:var(--gold);}
 
 .ont-warn{padding:7px 16px;border-top:1px solid rgba(248,113,113,.15);background:rgba(248,113,113,.04);font-size:11px;color:var(--red);}
 
 /* ONTARIO BADGE */
-.obadge{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.5px;}
+.ob{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.5px;}
 .ob-y{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3);}
 .ob-n{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2);}
 .ob-m{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.2);}
+.ob-fav{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
 
-/* SECTION LABEL */
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.chart-h{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--green);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.chart-sub{font-size:11px;color:var(--muted2);}
+canvas{width:100%!important;}
+
+/* SLABEL */
 .slabel{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .slabel::after{content:'';flex:1;height:1px;background:var(--border);}
 
-/* CALC PANEL */
-.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;}
-.ccard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;}
+/* BOOKMAKERS TAB */
+.bm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.bm-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;transition:border-color .2s;}
+.bm-card:hover{border-color:var(--border2);}
+.bm-card.fav{border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.04);}
+.bm-card.inactive{opacity:.4;}
+.bm-info{flex:1;}
+.bm-name{font-size:13px;font-weight:600;margin-bottom:3px;}
+.bm-tags{display:flex;gap:4px;flex-wrap:wrap;}
+.bm-tag{font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
+.bm-actions{display:flex;gap:6px;margin-left:10px;}
+.fav-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:2px;transition:transform .2s;}
+.fav-btn:hover{transform:scale(1.2);}
+.tog-btn{background:none;border:1px solid var(--border);color:var(--muted2);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;transition:all .2s;}
+.tog-btn:hover{border-color:var(--border2);color:var(--white);}
+
+/* CALC */
+.calc-wrap{max-width:580px;}
+.ccard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:16px;}
 .ccard-h{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--green);margin-bottom:16px;}
 .irow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 .ires{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
@@ -167,7 +196,7 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font
 .rtile-v{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;}
 .rtile-v.g{color:var(--green);}
 .rtile-v.gold{color:var(--gold);}
-.abtn{width:100%;background:var(--green);color:var(--bg);border:none;padding:11px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:6px;transition:background .2s;}
+.abtn{width:100%;background:var(--green);color:var(--bg);border:none;padding:11px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:4px;}
 .abtn:hover{background:#2ecf8a;}
 
 /* HISTORY */
@@ -176,104 +205,107 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font
 .htable td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
 .htable tr:hover td{background:rgba(255,255,255,.02);}
 .rchip{padding:2px 7px;border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:600;}
-.rc-dark{background:rgba(4,120,87,.25);color:#34d399;}
-.rc-green{background:rgba(52,211,153,.12);color:var(--green);}
-.rc-gold{background:var(--gold-dim);color:var(--gold);}
+.rc-elite{background:rgba(4,120,87,.25);color:#34d399;}
+.rc-hot{background:rgba(52,211,153,.12);color:var(--green);}
+.rc-std{background:rgba(251,191,36,.12);color:var(--gold);}
 
 /* SETTINGS */
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:700px;}
 .scard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;}
 .scard-h{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--green);margin-bottom:14px;}
 .srow{margin-bottom:14px;}
-.sbtn{background:var(--green);color:var(--bg);border:none;padding:10px 20px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:background .2s;width:100%;grid-column:1/-1;}
+.sbtn{background:var(--green);color:var(--bg);border:none;padding:10px 20px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%;grid-column:1/-1;}
 .sbtn:hover{background:#2ecf8a;}
 
-/* DEMO BANNER */
-.demo-bar{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:12px;color:var(--gold);display:flex;align-items:center;gap:8px;}
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-ico{font-size:52px;margin-bottom:16px;}
+.empty-h{font-family:'Barlow Condensed',sans-serif;font-size:24px;color:var(--white);margin-bottom:8px;}
+.empty-s{font-size:13px;line-height:1.7;}
 
 /* TOAST */
 .toasts{position:fixed;top:62px;right:14px;z-index:999;display:flex;flex-direction:column;gap:8px;max-width:300px;}
-.toast{background:var(--card);border:1px solid var(--green);border-radius:9px;padding:13px 15px;animation:tslide .3s ease;box-shadow:0 4px 24px rgba(0,0,0,.6);}
-@keyframes tslide{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast{background:var(--card);border:1px solid var(--green);border-radius:9px;padding:13px 15px;animation:ts .3s ease;box-shadow:0 4px 24px rgba(0,0,0,.6);}
+@keyframes ts{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 .toast-h{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--green);margin-bottom:3px;}
 .toast-b{font-size:11px;color:var(--muted2);line-height:1.5;}
-.toast-roi{font-size:20px;font-weight:700;color:var(--gold);}
+.toast-r{font-size:20px;font-weight:700;color:var(--gold);}
 
 footer{padding:14px 16px;text-align:center;font-size:10px;color:var(--muted);border-top:1px solid var(--border);line-height:1.8;}
 
-@media(max-width:640px){
+@media(max-width:700px){
   .statsbar{grid-template-columns:1fr 1fr 1fr;}
   .sc:nth-child(4),.sc:nth-child(5){display:none;}
-  .cb{grid-template-columns:1fr;}
+  .cb,.charts-grid,.sgrid,.irow,.ires{grid-template-columns:1fr;}
   .cf{grid-template-columns:1fr 1fr;}
-  .calc-grid,.sgrid{grid-template-columns:1fr;}
-  .irow{grid-template-columns:1fr;}
-  .topbar-right .tclock{display:none;}
-  .setup-row{grid-template-columns:1fr;}
+  .topbar .tclock{display:none;}
+  .srow3{grid-template-columns:1fr;}
+  .bm-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════ SETUP ═══════════════════════ -->
+<!-- ═══ SETUP ═══ -->
 <div id="setup">
-<div class="setup-box">
-  <div class="setup-brand">
-    <div class="brand-icon">⚡</div>
-    <div><div class="brand-name">SureBet Pro</div><div class="brand-tag">Ontario Edition</div></div>
+<div class="sbox">
+  <div class="sbrand">
+    <div class="sicon">⚡</div>
+    <div><div class="sname">SureBet Pro v3</div><div class="stag">Ontario · Production Grade</div></div>
   </div>
-  <div class="setup-h">Lancez votre scanner</div>
-  <div class="setup-sub">Clé stockée localement · Jamais partagée · Refresh configurable</div>
+  <div class="sh">Lancez votre scanner</div>
+  <div class="ssub">Système professionnel d'arbitrage · 33 bookmakers Ontario · Analytics en temps réel</div>
   <div class="err" id="err"></div>
   <div class="fl">
     <label>Clé API — The Odds API</label>
-    <div class="fi-pw"><input type="password" class="fi" id="k" placeholder="Collez votre clé..."><button class="eye" onclick="tg('k')">👁</button></div>
+    <div class="pw"><input type="password" class="fi" id="k" placeholder="Collez votre clé..."><button class="eye" onclick="tgEye('k')">👁</button></div>
   </div>
-  <div class="setup-row">
-    <div class="fl"><label>ROI minimum (%)</label><input type="number" class="fi" id="sr" value="1" min="0.1" max="20" step="0.1"></div>
+  <div class="srow3">
+    <div class="fl"><label>ROI minimum (%)</label><input type="number" class="fi" id="sr" value="1" min="0.1" step="0.1"></div>
     <div class="fl"><label>Bankroll ($CAD)</label><input type="number" class="fi" id="sb" value="1000" min="10"></div>
-    <div class="fl"><label>Refresh (min)</label><input type="number" class="fi" id="srf" value="90" min="30" max="360"></div>
+    <div class="fl"><label>Refresh (sec)</label><input type="number" class="fi" id="srf" value="5400" min="30" max="86400"></div>
   </div>
   <button class="cta" id="cbtn" onclick="connect()">⚡ Connecter et lancer</button>
-  <div class="setup-note">🔒 Données locales uniquement · Aucun serveur tiers · iGaming Ontario</div>
+  <div class="snote">🔒 Clé locale · Données: The Odds API · 33 bookmakers iGaming Ontario</div>
 </div>
 </div>
 
-<!-- ═══════════════════════ APP ═══════════════════════ -->
+<!-- ═══ APP ═══ -->
 <div id="app">
 <div class="lbar" id="lbar"></div>
-
 <div class="topbar">
-  <div class="topbar-left">
-    <div class="tlogo">⚡ SureBet <span>Pro</span></div>
+  <div class="tl">
+    <div class="tlogo">⚡ SureBet <span>Pro v3</span></div>
     <div class="vpill"><div class="vdot" id="vdot"></div><span id="vstxt">Init</span></div>
   </div>
-  <div class="topbar-right">
-    <div class="tclock">⏱ <span id="cdtxt">—:——</span></div>
-    <button class="ticon" id="sndbtn" onclick="togSound()" title="Son">🔔</button>
-    <button class="ticon" onclick="goTab('settings')" title="Paramètres">⚙️</button>
-    <button class="ticon" onclick="doLogout()" title="Déconnecter">✕</button>
+  <div class="tr">
+    <div class="tclock">⏱ <span id="cdtxt">——:——</span></div>
+    <button class="ticon" id="sndbtn" onclick="togSnd()">🔔</button>
+    <button class="ticon" onclick="goTab('settings')">⚙️</button>
+    <button class="ticon" onclick="doLogout()">✕</button>
   </div>
 </div>
 
 <div class="statsbar">
-  <div class="sc"><div class="sc-label">Surebets</div><div class="sc-val g" id="st0">—</div><div class="sc-sub">actifs</div></div>
-  <div class="sc"><div class="sc-label">Meilleur ROI</div><div class="sc-val gold" id="st1">—</div><div class="sc-sub">opportunité</div></div>
-  <div class="sc"><div class="sc-label">Profit max</div><div class="sc-val g" id="st2">—</div><div class="sc-sub">garanti</div></div>
-  <div class="sc"><div class="sc-label">Bookmakers</div><div class="sc-val" id="st3">—</div><div class="sc-sub">scannés</div></div>
-  <div class="sc"><div class="sc-label">Matchs</div><div class="sc-val" id="st4">—</div><div class="sc-sub">analysés</div></div>
+  <div class="sc"><div class="sc-l">Surebets</div><div class="sc-v g" id="s0">—</div><div class="sc-s">actifs</div></div>
+  <div class="sc"><div class="sc-l">Meilleur ROI</div><div class="sc-v gold" id="s1">—</div><div class="sc-s">opportunité</div></div>
+  <div class="sc"><div class="sc-l">Profit max</div><div class="sc-v g" id="s2">—</div><div class="sc-s">garanti</div></div>
+  <div class="sc"><div class="sc-l">Bookmakers</div><div class="sc-v" id="s3">—</div><div class="sc-s">scannés</div></div>
+  <div class="sc"><div class="sc-l">Matchs</div><div class="sc-v" id="s4">—</div><div class="sc-s">analysés</div></div>
 </div>
 
 <div class="tabs">
   <div class="tab on" onclick="goTab('scan')">Surebets <span class="tbadge" id="b0">0</span></div>
+  <div class="tab" onclick="goTab('dash')">Dashboard 📊</div>
+  <div class="tab" onclick="goTab('books')">Bookmakers <span class="tbadge" id="b1">0</span></div>
   <div class="tab" onclick="goTab('calc')">Calculateur</div>
-  <div class="tab" onclick="goTab('hist')">Historique <span class="tbadge" id="b1">0</span></div>
+  <div class="tab" onclick="goTab('hist')">Historique <span class="tbadge" id="b2">0</span></div>
   <div class="tab" onclick="goTab('settings')">Paramètres</div>
 </div>
 
 <div class="main">
 
-<!-- ── SCAN TAB ── -->
+<!-- ── SCAN ── -->
 <div class="panel on" id="panel-scan">
   <div class="spills" id="spills">
     <div class="spill on" data-s="all" onclick="setSport(this)">🌍 Tous</div>
@@ -284,94 +316,140 @@ footer{padding:14px 16px;text-align:center;font-size:10px;color:var(--muted);bor
     <div class="spill" data-s="soccer" onclick="setSport(this)">⚽ Football</div>
     <div class="spill" data-s="icehockey" onclick="setSport(this)">🏒 Hockey</div>
     <div class="spill" data-s="americanfootball" onclick="setSport(this)">🏈 NFL</div>
+    <div class="spill" data-s="volleyball" onclick="setSport(this)">🏐 Volleyball</div>
+  </div>
+  <div class="roi-btns">
+    <span class="roi-lbl">ROI min:</span>
+    <button class="rqbtn on" data-roi="cfg" onclick="setRoi(this)">Config</button>
+    <button class="rqbtn" data-roi="1" onclick="setRoi(this)">1%</button>
+    <button class="rqbtn" data-roi="2" onclick="setRoi(this)">2%</button>
+    <button class="rqbtn" data-roi="3" onclick="setRoi(this)">3%</button>
+    <button class="rqbtn" data-roi="5" onclick="setRoi(this)">5%</button>
+    <button class="rqbtn" data-roi="8" onclick="setRoi(this)">8%+</button>
   </div>
   <div class="toolbar">
-    <span class="tbar-label">Trier par:</span>
     <select class="tbar-sel" id="sortsel" onchange="renderScan()">
       <option value="roi">ROI ↓</option>
       <option value="profit">Profit ↓</option>
       <option value="time">Heure du match</option>
+      <option value="fresh">Fraîcheur</option>
     </select>
-    <span class="tbar-label" style="margin-left:8px">Min ROI:</span>
-    <select class="tbar-sel" id="roifilter" onchange="renderScan()">
-      <option value="cfg">Config (défaut)</option>
-      <option value="1">≥ 1%</option>
-      <option value="2">≥ 2%</option>
-      <option value="3">≥ 3%</option>
-      <option value="5">≥ 5%</option>
-      <option value="8">≥ 8%</option>
+    <select class="tbar-sel" id="bookfilter" onchange="renderScan()">
+      <option value="all">Tous les bookmakers</option>
+      <option value="fav">⭐ Favoris seulement</option>
+      <option value="ontario">✅ Ontario seulement</option>
     </select>
-    <button class="rbtn ml-auto" onclick="fetch2(true)">↻ Actualiser</button>
+    <button class="rbtn ml" onclick="doFetch(true)">↻ Actualiser</button>
   </div>
   <div id="scan-list"></div>
 </div>
 
-<!-- ── CALC TAB ── -->
+<!-- ── DASHBOARD ── -->
+<div class="panel" id="panel-dash">
+  <div class="slabel">Analytics en temps réel</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-h">ROI dans le temps <span class="chart-sub" id="roi-chart-sub">—</span></div>
+      <canvas id="roiChart" height="180"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-h">Volume d'opportunités <span class="chart-sub" id="vol-chart-sub">—</span></div>
+      <canvas id="volChart" height="180"></canvas>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-h">ROI par sport</div>
+      <canvas id="sportChart" height="180"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-h">Top bookmakers impliqués</div>
+      <canvas id="bookChart" height="180"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ── BOOKMAKERS ── -->
+<div class="panel" id="panel-books">
+  <div class="toolbar">
+    <div class="slabel" style="margin-bottom:0;flex:1">Gestion des bookmakers</div>
+    <button class="rbtn" onclick="renderBooks()">↻ Rafraîchir</button>
+  </div>
+  <div style="margin-top:12px;margin-bottom:8px;font-size:12px;color:var(--muted2);">
+    ⭐ Cliquez l'étoile pour ajouter aux favoris · Les favoris apparaissent en premier dans les surebets
+  </div>
+  <div class="bm-grid" id="bm-grid"></div>
+</div>
+
+<!-- ── CALC ── -->
 <div class="panel" id="panel-calc">
-  <div class="slabel">Calculateur de mise optimale</div>
-  <div class="calc-grid">
-    <div class="ccard" style="grid-column:1/-1">
+  <div class="calc-wrap">
+    <div class="slabel">Calculateur de mise optimale</div>
+    <div class="ccard">
       <div class="ccard-h">Entrez les cotes décimales</div>
       <div class="irow">
         <div class="fl"><label>Bankroll ($CAD)</label><input type="number" class="fi" id="ck-bk" value="1000" min="1"></div>
-        <div class="fl"><label>Mise max/bookmaker ($)</label><input type="number" class="fi" id="ck-mx" placeholder="Illimité" min="1"></div>
+        <div class="fl"><label>Mise max/bookmaker ($)</label><input type="number" class="fi" id="ck-mx" placeholder="Illimité"></div>
       </div>
       <div class="irow">
-        <div class="fl"><label>Cote 1 (Participant A)</label><input type="number" class="fi" id="ck-o1" value="2.10" step="0.01" min="1.01"></div>
-        <div class="fl"><label>Cote 2 (Participant B)</label><input type="number" class="fi" id="ck-o2" value="2.05" step="0.01" min="1.01"></div>
+        <div class="fl"><label>Cote 1 (A)</label><input type="number" class="fi" id="co1" value="2.10" step="0.01" min="1.01"></div>
+        <div class="fl"><label>Cote 2 (B)</label><input type="number" class="fi" id="co2" value="2.05" step="0.01" min="1.01"></div>
       </div>
-      <div class="fl"><label>Bookmaker A</label><input type="text" class="fi" id="ck-b1" placeholder="ex: FanDuel"></div>
-      <div class="fl"><label>Bookmaker B</label><input type="text" class="fi" id="ck-b2" placeholder="ex: BetMGM"></div>
+      <div class="irow">
+        <div class="fl"><label>Bookmaker A</label><input type="text" class="fi" id="cb1" placeholder="ex: FanDuel"></div>
+        <div class="fl"><label>Bookmaker B</label><input type="text" class="fi" id="cb2" placeholder="ex: BetMGM"></div>
+      </div>
       <button class="abtn" onclick="calcNow()">⚡ Calculer les mises optimales</button>
       <div class="ires" id="calc-res" style="display:none">
-        <div class="rtile"><div class="rtile-l">Mise A</div><div class="rtile-v g" id="cr1">—</div></div>
-        <div class="rtile"><div class="rtile-l">Mise B</div><div class="rtile-v g" id="cr2">—</div></div>
+        <div class="rtile"><div class="rtile-l">Mise A ($)</div><div class="rtile-v g" id="cr1">—</div></div>
+        <div class="rtile"><div class="rtile-l">Mise B ($)</div><div class="rtile-v g" id="cr2">—</div></div>
         <div class="rtile"><div class="rtile-l">ROI garanti</div><div class="rtile-v gold" id="cr3">—</div></div>
         <div class="rtile"><div class="rtile-l">Profit net</div><div class="rtile-v gold" id="cr4">—</div></div>
-        <div class="rtile" style="grid-column:1/-1"><div class="rtile-l">Retour garanti (peu importe le résultat)</div><div class="rtile-v g" id="cr5">—</div></div>
+        <div class="rtile" style="grid-column:1/-1"><div class="rtile-l">Retour garanti peu importe le résultat</div><div class="rtile-v g" id="cr5">—</div></div>
       </div>
       <div id="calc-err" style="display:none;margin-top:12px;color:var(--red);font-size:13px;"></div>
     </div>
   </div>
 </div>
 
-<!-- ── HISTORY TAB ── -->
+<!-- ── HISTORY ── -->
 <div class="panel" id="panel-hist">
   <div class="toolbar">
-    <div class="slabel" style="margin-bottom:0;flex:1">Historique des opportunités</div>
+    <div class="slabel" style="margin-bottom:0;flex:1">Historique complet</div>
     <button class="rbtn" onclick="expCSV()">⬇ CSV</button>
-    <button class="rbtn" style="border-color:rgba(248,113,113,.4);color:var(--red)" onclick="clrHist()">🗑</button>
+    <button class="rbtn" style="border-color:rgba(248,113,113,.4);color:var(--red)" onclick="clrHist()">🗑 Vider</button>
   </div>
   <div style="margin-top:12px" id="hist-content"></div>
 </div>
 
-<!-- ── SETTINGS TAB ── -->
+<!-- ── SETTINGS ── -->
 <div class="panel" id="panel-settings">
   <div class="slabel">Paramètres</div>
   <div class="sgrid">
     <div class="scard">
-      <div class="scard-h">🎯 Filtres & Affichage</div>
+      <div class="scard-h">🎯 Filtres ROI</div>
       <div class="srow"><div class="fl"><label>ROI minimum (%)</label><input type="number" class="fi" id="ss-roi" step="0.1" min="0.1"></div></div>
-      <div class="srow"><div class="fl"><label>ROI "Hot" 🔥 (badge or) (%)</label><input type="number" class="fi" id="ss-hot" step="0.1" min="1"></div></div>
-      <div class="srow"><div class="fl"><label>ROI "Elite" ⚡ (badge vert foncé) (%)</label><input type="number" class="fi" id="ss-elite" step="0.1" value="8"></div></div>
+      <div class="srow"><div class="fl"><label>Seuil HOT 🔥 (%)</label><input type="number" class="fi" id="ss-hot" step="0.1" min="1"></div></div>
+      <div class="srow"><div class="fl"><label>Seuil ELITE ⚡ (%)</label><input type="number" class="fi" id="ss-elite" step="0.1" min="3"></div></div>
     </div>
     <div class="scard">
       <div class="scard-h">💰 Bankroll</div>
       <div class="srow"><div class="fl"><label>Bankroll ($CAD)</label><input type="number" class="fi" id="ss-bk" min="10"></div></div>
-      <div class="srow"><div class="fl"><label>% max utilisé par surebet</label><input type="number" class="fi" id="ss-pct" min="1" max="100"></div></div>
+      <div class="srow"><div class="fl"><label>% max par surebet</label><input type="number" class="fi" id="ss-pct" min="1" max="100"></div></div>
       <div class="srow"><div class="fl"><label>Mise max par bookmaker ($)</label><input type="number" class="fi" id="ss-mx" placeholder="Illimité"></div></div>
     </div>
     <div class="scard">
       <div class="scard-h">⏱ Refresh</div>
-      <div class="srow"><div class="fl"><label>Intervalle (minutes)</label><input type="number" class="fi" id="ss-rf" min="30" max="360"></div></div>
-      <div class="srow"><div class="fl"><label>Son des alertes</label>
+      <div class="srow"><div class="fl"><label>Intervalle (secondes)</label><input type="number" class="fi" id="ss-rf" min="30"></div></div>
+      <div class="srow"><div class="fl"><label>Alerte sonore</label>
         <select class="fi" id="ss-snd"><option value="1">Activé 🔔</option><option value="0">Désactivé 🔕</option></select>
       </div></div>
+      <div class="srow"><div class="fl"><label>Données périmées après (min)</label><input type="number" class="fi" id="ss-stale" value="10" min="1"></div></div>
     </div>
     <div class="scard">
       <div class="scard-h">🔑 API</div>
       <div class="srow"><div class="fl"><label>Clé The Odds API</label>
-        <div class="fi-pw"><input type="password" class="fi" id="ss-key" style="background:var(--surface)"><button class="eye" onclick="tg('ss-key')">👁</button></div>
+        <div class="pw"><input type="password" class="fi" id="ss-key" style="background:var(--surface)"><button class="eye" onclick="tgEye('ss-key')">👁</button></div>
       </div></div>
     </div>
     <button class="sbtn" onclick="saveSet()">✅ Sauvegarder les paramètres</button>
@@ -379,61 +457,104 @@ footer{padding:14px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 </div>
 
 </div><!-- .main -->
-<footer>SureBet Pro · iGaming Ontario · Données: The Odds API · Jouer comporte des risques · ConnexOntario 1-866-531-2600</footer>
+<footer>SureBet Pro v3 · iGaming Ontario · 33 Bookmakers · The Odds API · ConnexOntario 1-866-531-2600</footer>
 </div><!-- #app -->
 
 <div class="toasts" id="toasts"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// STATE & CONFIG
-// ═══════════════════════════════════════════════════════════
-let C={apiKey:'',minRoi:1,hotRoi:3,eliteRoi:8,bankroll:1000,maxPct:100,maxPerBook:0,sound:true,refreshMin:90};
-let S={sbs:[],hist:[],books:0,games:0,sport:'all',cdSec:0,cdInt:null};
+// ═══════════════════════════════════════════════════════════════
+// CONFIG & STATE
+// ═══════════════════════════════════════════════════════════════
+let C={apiKey:'',minRoi:1,hotRoi:3,eliteRoi:8,bankroll:1000,maxPct:100,maxPerBook:0,sound:true,refreshSec:5400,staleMin:10};
+let S={sbs:[],hist:[],books:0,games:0,sport:'all',roiFilter:'cfg',cdSec:0,cdInt:null,fetchTime:null,roiHistory:[],volHistory:[],bookmakers:[]};
+let FAV=new Set();
 
-const ONTARIO={
-  fanduel:'y',draftkings:'y',betmgm:'y',pointsbet:'y',bet365:'y',
-  betrivers:'y',unibet:'y',caesars:'y',proline:'y',sports_interaction:'y',
-  williamhill:'n',betright:'n',betfair:'n',paddypower:'n',boylesports:'n',
-  marathonbet:'n',pinnacle:'m',bwin:'m',betway:'m',unibet_eu:'n',
-};
+// ═══════════════════════════════════════════════════════════════
+// BOOKMAKERS (from embedded JSON — mirrors bookmakers.json)
+// ═══════════════════════════════════════════════════════════════
+const BM_DATA=[
+  {id:1,nom:"888 Sport",cle_api:"888sport",statut_ontario:"actif",services:["paris_sportifs"]},
+  {id:2,nom:"Bally Bet",cle_api:"ballybet",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:3,nom:"Bet365",cle_api:"bet365",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:4,nom:"Bet99",cle_api:"bet99",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:5,nom:"Betano",cle_api:"betano",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:6,nom:"BetMGM",cle_api:"betmgm",statut_ontario:"actif",services:["paris_sportifs"]},
+  {id:7,nom:"BetNova",cle_api:"betnova",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:8,nom:"BetRivers",cle_api:"betrivers",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:9,nom:"BetVictor",cle_api:"betvictor",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:10,nom:"Betway",cle_api:"betway",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:11,nom:"Bwin",cle_api:"bwin",statut_ontario:"actif",services:["casino","poker","paris_sportifs"]},
+  {id:12,nom:"Caesars",cle_api:"caesars",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:13,nom:"ComeOn!",cle_api:"comeon",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:14,nom:"DraftKings",cle_api:"draftkings",statut_ontario:"actif",services:["paris_sportifs"]},
+  {id:15,nom:"FanDuel",cle_api:"fanduel",statut_ontario:"actif",services:["paris_sportifs"]},
+  {id:16,nom:"LeoVegas",cle_api:"leovegas",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:17,nom:"Neo.bet",cle_api:"neobet",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:18,nom:"NorthStar Bets",cle_api:"northstarbets",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:19,nom:"Partysports",cle_api:"partysports",statut_ontario:"actif",services:["paris_sportifs"]},
+  {id:20,nom:"Pinnacle",cle_api:"pinnacle",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:21,nom:"Play Fallsview",cle_api:"playfallsview",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:22,nom:"PointsBet",cle_api:"pointsbet",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:23,nom:"PowerPlay",cle_api:"powerplay",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:24,nom:"PROLINE+",cle_api:"proline",statut_ontario:"actif",services:["paris_sportifs"]},
+  {id:25,nom:"Rivalry",cle_api:"rivalry",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:26,nom:"Sports Interaction",cle_api:"sports_interaction",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:27,nom:"STX",cle_api:"stx",statut_ontario:"actif",services:["paris_sportifs","bourse_de_paris"]},
+  {id:28,nom:"Swiper",cle_api:"swiper",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:29,nom:"TheScore Bet",cle_api:"thescore",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:30,nom:"Titan Play",cle_api:"titanplay",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:31,nom:"TonyBet",cle_api:"tonybet",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:32,nom:"TooonieBet",cle_api:"tooniebet",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+  {id:33,nom:"Unibet",cle_api:"unibet",statut_ontario:"actif",services:["casino","paris_sportifs"]},
+];
 
+// Active bookmakers (can be toggled by user)
+let ACTIVE_BM=new Set(BM_DATA.map(b=>b.cle_api));
+
+function isOntario(key){
+  key=key.toLowerCase();
+  return BM_DATA.some(b=>key.includes(b.cle_api)||b.cle_api.includes(key));
+}
+function isFav(key){
+  key=key.toLowerCase();
+  return [...FAV].some(f=>key.includes(f)||f.includes(key));
+}
+function isActive(key){
+  key=key.toLowerCase();
+  return [...ACTIVE_BM].some(a=>key.includes(a)||a.includes(key));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SPORTS
+// ═══════════════════════════════════════════════════════════════
 const SPORTS=[
-  // Tennis
-  'tennis_atp_french_open','tennis_wta_french_open','tennis_atp_wimbledon',
-  'tennis_wta_wimbledon','tennis_atp_us_open','tennis_wta_us_open',
-  // Basketball
+  'tennis_atp_french_open','tennis_wta_french_open','tennis_atp_wimbledon','tennis_wta_wimbledon',
+  'tennis_atp_us_open','tennis_wta_us_open','tennis_atp_aus_open','tennis_wta_aus_open',
   'basketball_nba','basketball_nba_summer_league',
-  // Baseball
   'baseball_mlb',
-  // MMA
   'mma_mixed_martial_arts',
-  // Soccer
-  'soccer_epl','soccer_france_ligue_one','soccer_germany_bundesliga',
-  'soccer_italy_serie_a','soccer_spain_la_liga','soccer_uefa_champs_league',
-  'soccer_usa_mls','soccer_canada_mls','soccer_fifa_world_cup',
-  // Hockey
+  'soccer_epl','soccer_france_ligue_one','soccer_germany_bundesliga','soccer_italy_serie_a',
+  'soccer_spain_la_liga','soccer_uefa_champs_league','soccer_usa_mls','soccer_canada_mls','soccer_fifa_world_cup',
   'icehockey_nhl',
-  // NFL
   'americanfootball_nfl',
-  // Volleyball — no direct API key but try
   'volleyball_wovb_world_championships',
 ];
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // SETUP
-// ═══════════════════════════════════════════════════════════
-function tg(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
+// ═══════════════════════════════════════════════════════════════
+function tgEye(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
 
 async function connect(){
   const key=document.getElementById('k').value.trim();
-  if(!key||key.length<20){showErr('Clé API trop courte.');return;}
+  if(!key||key.length<20){showErr('Clé API invalide.');return;}
   C.apiKey=key;
   C.minRoi=parseFloat(document.getElementById('sr').value)||1;
   C.bankroll=parseFloat(document.getElementById('sb').value)||1000;
-  C.refreshMin=parseFloat(document.getElementById('srf').value)||90;
+  C.refreshSec=parseFloat(document.getElementById('srf').value)||5400;
   const btn=document.getElementById('cbtn');
-  btn.disabled=true;btn.textContent='Connexion…';
+  btn.disabled=true;btn.textContent='Vérification…';
   try{
     const r=await fetch(`https://api.the-odds-api.com/v4/sports/?apiKey=${C.apiKey}`);
     if(!r.ok)throw 0;
@@ -443,43 +564,46 @@ async function connect(){
     btn.disabled=false;btn.textContent='⚡ Connecter et lancer';
   }
 }
-
 function showErr(m){const e=document.getElementById('err');e.textContent='❌ '+m;e.style.display='block';}
-function saveC(){localStorage.setItem('sbc',JSON.stringify(C));}
+function saveC(){localStorage.setItem('sbcv3',JSON.stringify(C));}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // LAUNCH
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function launchApp(){
   document.getElementById('setup').style.display='none';
   const a=document.getElementById('app');a.style.display='flex';a.style.flexDirection='column';
-  const h=localStorage.getItem('sbh');if(h)S.hist=JSON.parse(h);
+  // Load persisted data
+  const h=localStorage.getItem('sbhv3');if(h)S.hist=JSON.parse(h);
+  const fv=localStorage.getItem('sbfav');if(fv)FAV=new Set(JSON.parse(fv));
+  const ab=localStorage.getItem('sbactive');if(ab)ACTIVE_BM=new Set(JSON.parse(ab));
+  const rh=localStorage.getItem('sbroi');if(rh)S.roiHistory=JSON.parse(rh);
+  const vh=localStorage.getItem('sbvol');if(vh)S.volHistory=JSON.parse(vh);
   // Populate settings
   document.getElementById('ss-roi').value=C.minRoi;
   document.getElementById('ss-hot').value=C.hotRoi;
   document.getElementById('ss-elite').value=C.eliteRoi;
   document.getElementById('ss-bk').value=C.bankroll;
   document.getElementById('ss-pct').value=C.maxPct;
-  document.getElementById('ss-rf').value=C.refreshMin;
+  document.getElementById('ss-rf').value=C.refreshSec;
   document.getElementById('ss-snd').value=C.sound?'1':'0';
   document.getElementById('ss-key').value=C.apiKey;
   document.getElementById('ck-bk').value=C.bankroll;
   updSndBtn();
-  renderHist();
-  fetch2(false);
+  renderHist();renderBooks();
+  doFetch(false);
   startCD();
 }
-
 function doLogout(){
-  if(!confirm('Déconnecter et effacer la clé ?'))return;
-  localStorage.removeItem('sbc');clearInterval(S.cdInt);location.reload();
+  if(!confirm('Déconnecter ?'))return;
+  localStorage.removeItem('sbcv3');clearInterval(S.cdInt);location.reload();
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // FETCH
-// ═══════════════════════════════════════════════════════════
-async function fetch2(manual=false){
-  setV('spin','Scan…');
+// ═══════════════════════════════════════════════════════════════
+async function doFetch(manual=false){
+  setV('spin','Scan en cours…');
   document.getElementById('lbar').classList.add('on');
   let all=[],books=new Set(),games=0;
   for(const sp of SPORTS){
@@ -487,39 +611,49 @@ async function fetch2(manual=false){
       const u=`https://api.the-odds-api.com/v4/sports/${sp}/odds/?apiKey=${C.apiKey}&regions=us,eu,uk,au&markets=h2h&oddsFormat=decimal&dateFormat=iso`;
       const r=await fetch(u);if(!r.ok)continue;
       const d=await r.json();games+=d.length;
-      for(const g of d){for(const bm of g.bookmakers)books.add(bm.key);all.push({sp,g});}
+      for(const g of d){for(const bm of g.bookmakers)books.add(bm.key);all.push({sp,g,fetchedAt:Date.now()});}
     }catch{continue;}
   }
-  S.books=books.size;S.games=games;
+  S.books=books.size;S.games=games;S.fetchTime=Date.now();
   const sbs=detect(all);
   const news=sbs.filter(sb=>!S.hist.find(h=>h.gid===sb.gid));
   S.sbs=sbs;
+  // Analytics
+  const now=new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
+  S.roiHistory.push({t:now,v:sbs.length?sbs[0].roi:0});
+  S.volHistory.push({t:now,v:sbs.length});
+  if(S.roiHistory.length>20)S.roiHistory.shift();
+  if(S.volHistory.length>20)S.volHistory.shift();
+  localStorage.setItem('sbroi',JSON.stringify(S.roiHistory));
+  localStorage.setItem('sbvol',JSON.stringify(S.volHistory));
+  // History
   for(const sb of news){
     S.hist.unshift({...sb,det:new Date().toISOString()});
     toast(sb);if(C.sound)beep();
   }
-  if(news.length){S.hist=S.hist.slice(0,500);localStorage.setItem('sbh',JSON.stringify(S.hist));}
-  updStats();renderScan();renderHist();
+  if(news.length){S.hist=S.hist.slice(0,500);localStorage.setItem('sbhv3',JSON.stringify(S.hist));}
+  updStats();renderScan();renderHist();renderBooks();updateCharts();
   setV('on',`MAJ ${new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'})}`);
   document.getElementById('lbar').classList.remove('on');
-  S.cdSec=C.refreshMin*60;
+  S.cdSec=C.refreshSec;
   if(manual)toast({matchName:'Actualisation manuelle ✅',roi:null});
 }
 
-// ═══════════════════════════════════════════════════════════
-// DETECT SUREBETS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// DETECT
+// ═══════════════════════════════════════════════════════════════
 function detect(all){
   const res=[];
-  for(const {sp,g} of all){
-    const bms=g.bookmakers;if(bms.length<2)continue;
+  for(const {sp,g,fetchedAt} of all){
+    const bms=g.bookmakers.filter(b=>isActive(b.key));
+    if(bms.length<2)continue;
     const best={};
     for(const bm of bms){
       for(const mk of bm.markets){
         if(mk.key!=='h2h')continue;
         for(const oc of mk.outcomes){
           if(!best[oc.name]||oc.price>best[oc.name].odd)
-            best[oc.name]={odd:oc.price,book:bm.title,bkey:bm.key};
+            best[oc.name]={odd:oc.price,book:bm.title,bkey:bm.key,updatedAt:mk.last_update||null};
         }
       }
     }
@@ -530,150 +664,272 @@ function detect(all){
     const roi=(1/arb-1)*100;
     if(roi<C.minRoi)continue;
     const total=C.bankroll*(C.maxPct/100);
+    const hasFav=ocs.some(([,v])=>isFav(v.bkey));
     const legs=ocs.map(([name,v])=>{
       let stake=total/(arb*v.odd);
-      // Apply max per book constraint
       if(C.maxPerBook>0&&stake>C.maxPerBook)stake=C.maxPerBook;
-      return{name,odd:v.odd,book:v.book,bkey:v.bkey,stake:+stake.toFixed(2),ont:ontSt(v.bkey)};
+      const ageMin=v.updatedAt?Math.round((Date.now()-new Date(v.updatedAt))/60000):null;
+      return{name,odd:v.odd,book:v.book,bkey:v.bkey,stake:+stake.toFixed(2),
+        ont:isOntario(v.bkey),fav:isFav(v.bkey),ageMin};
     });
     const ret=+(total/arb).toFixed(2);
     const profit=+(ret-total).toFixed(2);
+    const maxAge=Math.max(...legs.map(l=>l.ageMin||0));
     res.push({
       gid:g.id,matchName:`${g.home_team} vs ${g.away_team}`,
       sp,t:g.commence_time,roi:+roi.toFixed(2),arb:+arb.toFixed(4),
-      legs,total:+total.toFixed(2),ret,profit,nbooks:bms.length,
-      hasNonOnt:legs.some(l=>l.ont==='n'),
+      legs,total:+total.toFixed(2),ret,profit,nbooks:g.bookmakers.length,
+      hasNonOnt:legs.some(l=>!l.ont),hasFav,maxAge,fetchedAt,
     });
   }
   return res.sort((a,b)=>b.roi-a.roi);
 }
 
-function ontSt(k){
-  k=k.toLowerCase();
-  for(const[key,v]of Object.entries(ONTARIO)){if(k.includes(key))return v;}
-  return 'm';
-}
-
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // ROI CLASS
-// ═══════════════════════════════════════════════════════════
-function roiClass(roi){
-  if(roi>=C.eliteRoi)return'dark';
-  if(roi>=C.hotRoi)return'green';
-  if(roi>=C.minRoi)return'gold';
-  return'gray';
-}
-function roiLabel(roi){
-  if(roi>=C.eliteRoi)return'⚡ ELITE';
-  if(roi>=C.hotRoi)return'🔥 HOT';
-  return'✓ SUREBET';
-}
+// ═══════════════════════════════════════════════════════════════
+function rc(roi){return roi>=C.eliteRoi?'elite':roi>=C.hotRoi?'hot':'std';}
+function rl(roi){return roi>=C.eliteRoi?'⚡ ELITE':roi>=C.hotRoi?'🔥 HOT':'✓ SUREBET';}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // RENDER SCAN
-// ═══════════════════════════════════════════════════════════
-function setSport(el){
-  document.querySelectorAll('.spill').forEach(p=>p.classList.remove('on'));
-  el.classList.add('on');S.sport=el.dataset.s;renderScan();
-}
+// ═══════════════════════════════════════════════════════════════
+function setSport(el){document.querySelectorAll('.spill').forEach(p=>p.classList.remove('on'));el.classList.add('on');S.sport=el.dataset.s;renderScan();}
+function setRoi(el){document.querySelectorAll('.rqbtn').forEach(b=>b.classList.remove('on'));el.classList.add('on');S.roiFilter=el.dataset.roi;renderScan();}
 
 function renderScan(){
   const list=document.getElementById('scan-list');
   let sbs=[...S.sbs];
+  // Sport filter
   if(S.sport!=='all')sbs=sbs.filter(s=>s.sp.includes(S.sport));
   // ROI filter
-  const rf=document.getElementById('roifilter');
-  if(rf){const rv=rf.value==='cfg'?C.minRoi:parseFloat(rf.value);sbs=sbs.filter(s=>s.roi>=rv);}
+  const rv=S.roiFilter==='cfg'?C.minRoi:parseFloat(S.roiFilter);
+  sbs=sbs.filter(s=>s.roi>=rv);
+  // Bookmaker filter
+  const bf=document.getElementById('bookfilter')?.value||'all';
+  if(bf==='fav')sbs=sbs.filter(s=>s.hasFav);
+  if(bf==='ontario')sbs=sbs.filter(s=>!s.hasNonOnt);
   // Sort
   const sv=document.getElementById('sortsel')?.value||'roi';
   if(sv==='profit')sbs.sort((a,b)=>b.profit-a.profit);
   else if(sv==='time')sbs.sort((a,b)=>new Date(a.t)-new Date(b.t));
+  else if(sv==='fresh')sbs.sort((a,b)=>(a.maxAge||99)-(b.maxAge||99));
+  // Favorites first
+  sbs.sort((a,b)=>(b.hasFav?1:0)-(a.hasFav?1:0));
   document.getElementById('b0').textContent=sbs.length;
   if(!sbs.length){
-    list.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-h">Aucun surebet détecté</div><div class="empty-s">ROI min: ${C.minRoi}% · ${S.games} matchs analysés · ${S.books} bookmakers scannés<br>Prochain scan: <span id="nxt"></span></div></div>`;
+    list.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-h">Aucun surebet</div><div class="empty-s">ROI min: ${rv}% · ${S.games} matchs · ${S.books} bookmakers actifs<br>Prochain refresh: <span id="nxt"></span></div></div>`;
     updNxt();return;
   }
   list.innerHTML=sbs.map(sb=>{
-    const rc=roiClass(sb.roi);
-    const rl=roiLabel(sb.roi);
+    const cls=rc(sb.roi);
     const tt=sb.t?new Date(sb.t).toLocaleString('fr-CA',{dateStyle:'short',timeStyle:'short'}):'';
+    const ageMs=sb.fetchedAt?Date.now()-sb.fetchedAt:0;
+    const ageSec=Math.round(ageMs/1000);
+    const freshCls=ageSec<60?'new':ageSec<C.staleMin*60?'ok':'stale';
+    const freshTxt=ageSec<60?`🟢 ${ageSec}s`:ageSec<C.staleMin*60?`🟡 ${Math.round(ageSec/60)}min`:`🔴 ${Math.round(ageSec/60)}min — PÉRIMÉ`;
     const legsH=sb.legs.map(lg=>{
-      const ob=lg.ont==='y'?'<span class="obadge ob-y">ON ✓</span>':lg.ont==='n'?'<span class="obadge ob-n">Hors-ON</span>':'<span class="obadge ob-m">ON?</span>';
+      const obCls=lg.ont?'ob-y':'ob-n';
+      const obTxt=lg.ont?'ON ✓':'Hors-ON';
+      const favBadge=lg.fav?'<span class="ob ob-fav">⭐ FAV</span>':'';
+      const ageStr=lg.ageMin!==null?`<span class="data-age">Cote: il y a ${lg.ageMin}min</span>`:'';
       const ret=(lg.stake*lg.odd).toFixed(2);
-      return`<div class="leg">
+      return`<div class="leg${lg.fav?' fav-leg':''}">
         <div class="leg-out">${lg.name}</div>
-        <div class="leg-book">${lg.book} ${ob}</div>
+        <div class="leg-book">${lg.book} <span class="ob ${obCls}">${obTxt}</span>${favBadge}</div>
         <div class="leg-odd">${lg.odd.toFixed(2)}</div>
         <div class="leg-stake">Mise: $${lg.stake}</div>
-        <div class="leg-ret">Retour: $${ret}</div>
+        <div class="leg-ret">Retour: $${ret} ${ageStr}</div>
       </div>`;
     }).join('');
     const warn=sb.hasNonOnt?`<div class="ont-warn">⚠️ Vérifiez la disponibilité en Ontario avant de parier</div>`:'';
-    return`<div class="sbcard roi-${rc}">
+    const stalWarn=ageSec>C.staleMin*60?`<div class="ont-warn" style="color:var(--gold)">⏰ Données potentiellement périmées — actualisez avant de parier</div>`:'';
+    return`<div class="sbcard ${cls}${sb.hasFav?' fav-highlight':''}">
       <div class="ch">
         <div>
-          <div class="match-name">${sb.matchName}</div>
-          <div class="match-meta">${spLabel(sb.sp)} · ${tt} · ${sb.nbooks} bookmakers · Somme inverse: ${sb.arb}</div>
+          <div class="mn">${sb.hasFav?'⭐ ':''}${sb.matchName}</div>
+          <div class="mm">${spLabel(sb.sp)} · ${tt} · ${sb.nbooks} bookmakers · Σ inverse: ${sb.arb}
+            <br><span class="fresh ${freshCls}">${freshTxt}</span>
+          </div>
         </div>
         <div class="roi-pill">
-          <div class="roi-num ${rc}">${sb.roi}%</div>
-          <div class="roi-tag">${rl}</div>
+          <div class="rn ${cls}">${sb.roi}%</div>
+          <div class="rt">${rl(sb.roi)}</div>
         </div>
       </div>
       <div class="cb">${legsH}</div>
       <div class="cf">
-        <div class="cf-cell"><div class="cf-label">Bankroll</div><div class="cf-val">$${sb.total}</div></div>
-        <div class="cf-cell"><div class="cf-label">Retour garanti</div><div class="cf-val g">$${sb.ret}</div></div>
-        <div class="cf-cell"><div class="cf-label">Profit net</div><div class="cf-val gold">+$${sb.profit}</div></div>
-        <div class="cf-cell"><div class="cf-label">ROI</div><div class="cf-val ${rc}">${sb.roi}%</div></div>
+        <div class="cfc"><div class="cfl">Bankroll</div><div class="cfv">$${sb.total}</div></div>
+        <div class="cfc"><div class="cfl">Retour garanti</div><div class="cfv g">$${sb.ret}</div></div>
+        <div class="cfc"><div class="cfl">Profit net</div><div class="cfv gold">+$${sb.profit}</div></div>
+        <div class="cfc"><div class="cfl">ROI</div><div class="cfv ${cls}">${sb.roi}%</div></div>
       </div>
-      ${warn}
+      ${warn}${stalWarn}
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════
-// RENDER HISTORY
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// BOOKMAKERS TAB
+// ═══════════════════════════════════════════════════════════════
+function renderBooks(){
+  document.getElementById('b1').textContent=BM_DATA.filter(b=>b.statut_ontario==='actif').length;
+  const sorted=[...BM_DATA].sort((a,b)=>{
+    const af=FAV.has(a.cle_api)?0:1;
+    const bf2=FAV.has(b.cle_api)?0:1;
+    return af-bf2||a.nom.localeCompare(b.nom);
+  });
+  document.getElementById('bm-grid').innerHTML=sorted.map(b=>{
+    const isFv=FAV.has(b.cle_api);
+    const isAct=ACTIVE_BM.has(b.cle_api);
+    const tags=b.services.map(s=>`<span class="bm-tag">${s.replace('_',' ')}</span>`).join('');
+    return`<div class="bm-card${isFv?' fav':''}${!isAct?' inactive':''}">
+      <div class="bm-info">
+        <div class="bm-name">${b.nom}</div>
+        <div class="bm-tags">${tags}</div>
+      </div>
+      <div class="bm-actions">
+        <button class="fav-btn" onclick="togFav('${b.cle_api}')" title="Favori">${isFv?'⭐':'☆'}</button>
+        <button class="tog-btn" onclick="togActive('${b.cle_api}')">${isAct?'ON':'OFF'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togFav(key){
+  if(FAV.has(key))FAV.delete(key);else FAV.add(key);
+  localStorage.setItem('sbfav',JSON.stringify([...FAV]));
+  renderBooks();renderScan();
+}
+function togActive(key){
+  if(ACTIVE_BM.has(key))ACTIVE_BM.delete(key);else ACTIVE_BM.add(key);
+  localStorage.setItem('sbactive',JSON.stringify([...ACTIVE_BM]));
+  renderBooks();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════════════════════
+let charts={};
+function updateCharts(){
+  // ROI over time
+  drawLine('roiChart',S.roiHistory.map(p=>p.t),S.roiHistory.map(p=>p.v),'ROI max (%)','roi-chart-sub',`Max: ${S.roiHistory.length?Math.max(...S.roiHistory.map(p=>p.v)).toFixed(2):0}%`,'#34d399');
+  // Volume
+  drawLine('volChart',S.volHistory.map(p=>p.t),S.volHistory.map(p=>p.v),'Surebets détectés','vol-chart-sub',`Total: ${S.volHistory.reduce((s,p)=>s+p.v,0)}`,'#fbbf24');
+  // By sport
+  const sportCounts={};
+  S.sbs.forEach(sb=>{const sl=spLabel(sb.sp);sportCounts[sl]=(sportCounts[sl]||0)+1;});
+  drawBar('sportChart',Object.keys(sportCounts),Object.values(sportCounts),'#60a5fa');
+  // Top books
+  const bookCounts={};
+  S.sbs.forEach(sb=>sb.legs.forEach(l=>{bookCounts[l.book]=(bookCounts[l.book]||0)+1;}));
+  const sorted=Object.entries(bookCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  drawBar('bookChart',sorted.map(e=>e[0]),sorted.map(e=>e[1]),'#a78bfa');
+}
+
+function drawLine(id,labels,data,label,subId,subTxt,color){
+  const sub=document.getElementById(subId);if(sub)sub.textContent=subTxt;
+  const canvas=document.getElementById(id);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth||300;canvas.height=180;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(!data.length){ctx.fillStyle='#5a7060';ctx.font='13px Inter';ctx.textAlign='center';ctx.fillText('En attente de données…',canvas.width/2,90);return;}
+  const W=canvas.width,H=canvas.height,pad=40,bpad=30;
+  const max=Math.max(...data,0.1);
+  // Grid
+  ctx.strokeStyle='rgba(52,211,153,0.07)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad+(H-pad-bpad)*i/4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-10,y);ctx.stroke();}
+  // Y labels
+  ctx.fillStyle='#5a7060';ctx.font='10px Inter';ctx.textAlign='right';
+  for(let i=0;i<=4;i++){const y=pad+(H-pad-bpad)*i/4;ctx.fillText((max*(1-i/4)).toFixed(1),pad-4,y+3);}
+  // Line
+  ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=pad+(W-pad-10)*i/(Math.max(data.length-1,1));
+    const y=pad+(H-pad-bpad)*(1-v/max);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  // Fill
+  ctx.fillStyle=color+'22';ctx.beginPath();
+  data.forEach((v,i)=>{const x=pad+(W-pad-10)*i/(Math.max(data.length-1,1));const y=pad+(H-pad-bpad)*(1-v/max);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.lineTo(pad+(W-pad-10)*(data.length-1)/(Math.max(data.length-1,1)),H-bpad);
+  ctx.lineTo(pad,H-bpad);ctx.closePath();ctx.fill();
+  // Dots
+  data.forEach((v,i)=>{
+    const x=pad+(W-pad-10)*i/(Math.max(data.length-1,1));
+    const y=pad+(H-pad-bpad)*(1-v/max);
+    ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+  });
+  // X labels (every 4th)
+  ctx.fillStyle='#5a7060';ctx.font='9px Inter';ctx.textAlign='center';
+  labels.forEach((l,i)=>{if(i%4===0){const x=pad+(W-pad-10)*i/(Math.max(labels.length-1,1));ctx.fillText(l,x,H-8);}});
+}
+
+function drawBar(id,labels,data,color){
+  const canvas=document.getElementById(id);if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth||300;canvas.height=180;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(!data.length){ctx.fillStyle='#5a7060';ctx.font='13px Inter';ctx.textAlign='center';ctx.fillText('En attente de données…',canvas.width/2,90);return;}
+  const W=canvas.width,H=canvas.height,pad=30,bpad=40;
+  const max=Math.max(...data,1);
+  const bw=(W-pad-10)/data.length*0.7;
+  const gap=(W-pad-10)/data.length*0.3;
+  data.forEach((v,i)=>{
+    const x=pad+(W-pad-10)*i/data.length+gap/2;
+    const bh=(H-pad-bpad)*v/max;
+    const y=H-bpad-bh;
+    ctx.fillStyle=color+'aa';ctx.fillRect(x,y,bw,bh);
+    ctx.fillStyle=color;ctx.font='bold 12px Barlow Condensed';ctx.textAlign='center';
+    if(v>0)ctx.fillText(v,x+bw/2,y-4);
+    ctx.fillStyle='#5a7060';ctx.font='9px Inter';
+    const lbl=labels[i]||'';ctx.fillText(lbl.substring(0,8),x+bw/2,H-bpad+12);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════════
 function renderHist(){
-  document.getElementById('b1').textContent=S.hist.length;
-  const h=S.hist;
-  if(!h.length){
-    document.getElementById('hist-content').innerHTML=`<div class="empty"><div class="empty-ico">📋</div><div class="empty-h">Aucun historique</div><div class="empty-s">Les surebets détectés s'enregistrent ici automatiquement.</div></div>`;
-    return;
-  }
+  document.getElementById('b2').textContent=S.hist.length;
+  if(!S.hist.length){document.getElementById('hist-content').innerHTML=`<div class="empty"><div class="empty-ico">📋</div><div class="empty-h">Aucun historique</div><div class="empty-s">Les surebets s'enregistrent automatiquement.</div></div>`;return;}
   document.getElementById('hist-content').innerHTML=`<table class="htable">
-    <thead><tr><th>Match</th><th>Sport</th><th>ROI</th><th>Profit</th><th>Bookmakers</th><th>Détecté</th></tr></thead>
-    <tbody>${h.map(sb=>{
-      const rc=roiClass(sb.roi);
+    <thead><tr><th>Match</th><th>Sport</th><th>ROI</th><th>Profit</th><th>Retour</th><th>Bookmakers</th><th>Fraîcheur</th><th>Détecté</th></tr></thead>
+    <tbody>${S.hist.map(sb=>{
+      const cls=rc(sb.roi||0);
       const bks=sb.legs?sb.legs.map(l=>l.book).join(' / '):'—';
+      const ageMin=sb.fetchedAt?Math.round((Date.now()-sb.fetchedAt)/60000):null;
+      const freshTxt=ageMin!==null?(ageMin<C.staleMin?`🟢 ${ageMin}min`:`🔴 ${ageMin}min`):'—';
       return`<tr>
         <td><strong>${sb.matchName||'—'}</strong></td>
         <td>${spLabel(sb.sp||'')}</td>
-        <td><span class="rchip rc-${rc}">${sb.roi||0}%</span></td>
+        <td><span class="rchip rc-${cls}">${sb.roi||0}%</span></td>
         <td style="color:var(--green)">+$${sb.profit||0}</td>
+        <td style="color:var(--muted2)">$${sb.ret||0}</td>
         <td style="color:var(--blue);font-size:11px">${bks}</td>
+        <td>${freshTxt}</td>
         <td style="color:var(--muted2)">${sb.det?new Date(sb.det).toLocaleString('fr-CA',{dateStyle:'short',timeStyle:'short'}):'—'}</td>
       </tr>`;
     }).join('')}</tbody>
   </table>`;
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // CALC
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function calcNow(){
   const bk=parseFloat(document.getElementById('ck-bk').value)||0;
-  const o1=parseFloat(document.getElementById('ck-o1').value)||0;
-  const o2=parseFloat(document.getElementById('ck-o2').value)||0;
+  const o1=parseFloat(document.getElementById('co1').value)||0;
+  const o2=parseFloat(document.getElementById('co2').value)||0;
   const mx=parseFloat(document.getElementById('ck-mx').value)||0;
   document.getElementById('calc-res').style.display='none';
   document.getElementById('calc-err').style.display='none';
-  if(o1<1.01||o2<1.01){document.getElementById('calc-err').textContent='⚠️ Cotes invalides (minimum 1.01)';document.getElementById('calc-err').style.display='block';return;}
+  if(o1<1.01||o2<1.01){document.getElementById('calc-err').textContent='⚠️ Cotes invalides (min 1.01)';document.getElementById('calc-err').style.display='block';return;}
   const arb=1/o1+1/o2;
-  if(arb>=1){document.getElementById('calc-err').textContent=`⚠️ Pas de surebet — somme des inverses: ${arb.toFixed(4)} (doit être < 1)`;document.getElementById('calc-err').style.display='block';return;}
+  if(arb>=1){document.getElementById('calc-err').textContent=`⚠️ Pas de surebet — Σ inverses: ${arb.toFixed(4)} (doit être < 1.0)`;document.getElementById('calc-err').style.display='block';return;}
   let s1=bk/(arb*o1),s2=bk/(arb*o2);
-  // Apply max constraint
   if(mx>0){s1=Math.min(s1,mx);s2=Math.min(s2,mx);}
   s1=+s1.toFixed(2);s2=+s2.toFixed(2);
   const ret=+(bk/arb).toFixed(2);
@@ -687,9 +943,9 @@ function calcNow(){
   document.getElementById('calc-res').style.display='grid';
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // SETTINGS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function saveSet(){
   C.minRoi=parseFloat(document.getElementById('ss-roi').value)||1;
   C.hotRoi=parseFloat(document.getElementById('ss-hot').value)||3;
@@ -697,50 +953,51 @@ function saveSet(){
   C.bankroll=parseFloat(document.getElementById('ss-bk').value)||1000;
   C.maxPct=parseFloat(document.getElementById('ss-pct').value)||100;
   C.maxPerBook=parseFloat(document.getElementById('ss-mx').value)||0;
-  C.refreshMin=parseFloat(document.getElementById('ss-rf').value)||90;
+  C.refreshSec=parseFloat(document.getElementById('ss-rf').value)||5400;
+  C.staleMin=parseFloat(document.getElementById('ss-stale').value)||10;
   C.sound=document.getElementById('ss-snd').value==='1';
   const nk=document.getElementById('ss-key').value.trim();if(nk.length>20)C.apiKey=nk;
   document.getElementById('ck-bk').value=C.bankroll;
-  // Reset countdown with new interval
-  clearInterval(S.cdInt);S.cdSec=C.refreshMin*60;startCD();
+  clearInterval(S.cdInt);S.cdSec=C.refreshSec;startCD();
   saveC();updSndBtn();renderScan();
   toast({matchName:'Paramètres sauvegardés ✅',roi:null});
 }
 
-// ═══════════════════════════════════════════════════════════
-// EXPORT
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════════════════════
 function expCSV(){
   if(!S.hist.length){alert('Aucun historique.');return;}
-  const rows=[['Match','Sport','ROI (%)','Profit ($)','Retour ($)','Bookmakers','Cotes','Détecté']];
+  const rows=[['Match','Sport','ROI (%)','Profit ($)','Retour ($)','Bookmakers','Cotes','Fraîcheur (min)','Timestamp']];
   for(const sb of S.hist){
-    const bks=sb.legs?sb.legs.map(l=>l.book).join(' | '):'';
-    const odds=sb.legs?sb.legs.map(l=>`${l.name}:${l.odd}`).join(' | '):'';
-    rows.push([`"${sb.matchName||''}"`,spLabel(sb.sp||''),sb.roi||0,sb.profit||0,sb.ret||0,`"${bks}"`,`"${odds}"`,sb.det?new Date(sb.det).toLocaleString('fr-CA'):'']);
+    const bks=sb.legs?sb.legs.map(l=>l.book).join('|'):'';
+    const odds=sb.legs?sb.legs.map(l=>`${l.name}:${l.odd}`).join('|'):'';
+    const age=sb.fetchedAt?Math.round((Date.now()-sb.fetchedAt)/60000):'';
+    rows.push([`"${sb.matchName||''}"`,spLabel(sb.sp||''),sb.roi||0,sb.profit||0,sb.ret||0,`"${bks}"`,`"${odds}"`,age,sb.det?new Date(sb.det).toLocaleString('fr-CA'):'']);
   }
-  const csv=rows.map(r=>r.join(',')).join('\n');
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  a.download=`surebets_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8'}));
+  a.download=`surebets_v3_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 }
-function clrHist(){if(!confirm('Effacer tout l\'historique ?'))return;S.hist=[];localStorage.removeItem('sbh');renderHist();}
+function clrHist(){if(!confirm('Effacer ?'))return;S.hist=[];localStorage.removeItem('sbhv3');renderHist();}
 
-// ═══════════════════════════════════════════════════════════
-// UI HELPERS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// UI
+// ═══════════════════════════════════════════════════════════════
 function setV(s,t){document.getElementById('vdot').className='vdot '+s;document.getElementById('vstxt').textContent=t;}
 function updStats(){
-  document.getElementById('st0').textContent=S.sbs.length;
-  document.getElementById('st1').textContent=S.sbs.length?S.sbs[0].roi+'%':'—';
-  document.getElementById('st2').textContent=S.sbs.length?'+$'+S.sbs[0].profit:'—';
-  document.getElementById('st3').textContent=S.books||'—';
-  document.getElementById('st4').textContent=S.games||'—';
+  document.getElementById('s0').textContent=S.sbs.length;
+  document.getElementById('s1').textContent=S.sbs.length?S.sbs[0].roi+'%':'—';
+  document.getElementById('s2').textContent=S.sbs.length?'+$'+S.sbs[0].profit:'—';
+  document.getElementById('s3').textContent=S.books||'—';
+  document.getElementById('s4').textContent=S.games||'—';
 }
 function goTab(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('panel-'+id).classList.add('on');
   document.querySelectorAll('.tab').forEach(t=>{if(t.getAttribute('onclick')===`goTab('${id}')`)t.classList.add('on');});
+  if(id==='dash')setTimeout(updateCharts,100);
 }
 function spLabel(s){
   if(s.includes('tennis'))return'🎾 Tennis';
@@ -757,36 +1014,32 @@ function toast(sb){
   const c=document.getElementById('toasts');
   const t=document.createElement('div');t.className='toast';
   t.innerHTML=sb.roi===null?`<div class="toast-h">${sb.matchName}</div>`:
-    `<div class="toast-h">🎯 Nouveau surebet !</div><div class="toast-b">${sb.matchName}<br>ROI: <span class="toast-roi">${sb.roi}%</span> · Profit: +$${sb.profit} CAD</div>`;
-  c.appendChild(t);setTimeout(()=>t.remove(),5500);
+    `<div class="toast-h">🎯 Nouveau surebet !</div><div class="toast-b">${sb.matchName}<br>ROI: <span class="toast-r">${sb.roi}%</span> · +$${sb.profit}${sb.hasFav?' · ⭐ Favori':''}</div>`;
+  c.appendChild(t);setTimeout(()=>t.remove(),6000);
 }
-function updNxt(){const e=document.getElementById('nxt');if(e){const m=Math.floor(S.cdSec/60);e.textContent=m+'min';}}
-
-// ═══════════════════════════════════════════════════════════
-// SOUND
-// ═══════════════════════════════════════════════════════════
-function togSound(){C.sound=!C.sound;updSndBtn();saveC();}
+function updNxt(){const e=document.getElementById('nxt');if(e){const m=Math.floor(S.cdSec/60);const s=S.cdSec%60;e.textContent=`${m}m${s}s`;}}
+function togSnd(){C.sound=!C.sound;updSndBtn();saveC();}
 function updSndBtn(){document.getElementById('sndbtn').textContent=C.sound?'🔔':'🔕';}
 function beep(){
   try{
     const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    [[880,0,0.12],[1100,.2,0.12],[1320,.4,0.1]].forEach(([f,d,l])=>{
+    [[880,0,.12],[1100,.2,.12],[1320,.4,.1]].forEach(([f,d,l])=>{
       const o=ctx.createOscillator(),g=ctx.createGain();
       o.connect(g);g.connect(ctx.destination);
-      o.frequency.value=f;g.gain.value=0.25;
+      o.frequency.value=f;g.gain.value=0.22;
       o.start(ctx.currentTime+d);o.stop(ctx.currentTime+d+l);
     });
   }catch{}
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // COUNTDOWN
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function startCD(){
-  S.cdSec=C.refreshMin*60;
+  S.cdSec=C.refreshSec;
   S.cdInt=setInterval(()=>{
     S.cdSec--;
-    if(S.cdSec<=0){S.cdSec=C.refreshMin*60;fetch2(false);}
+    if(S.cdSec<=0){S.cdSec=C.refreshSec;doFetch(false);}
     const m=String(Math.floor(S.cdSec/60)).padStart(2,'0');
     const s=String(S.cdSec%60).padStart(2,'0');
     document.getElementById('cdtxt').textContent=`${m}:${s}`;
@@ -794,11 +1047,11 @@ function startCD(){
   },1000);
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // AUTO-LOAD
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 window.addEventListener('load',()=>{
-  const sv=localStorage.getItem('sbc');
+  const sv=localStorage.getItem('sbcv3');
   if(sv){
     try{
       const p=JSON.parse(sv);
@@ -807,7 +1060,7 @@ window.addEventListener('load',()=>{
         document.getElementById('k').value=C.apiKey;
         document.getElementById('sr').value=C.minRoi;
         document.getElementById('sb').value=C.bankroll;
-        document.getElementById('srf').value=C.refreshMin;
+        document.getElementById('srf').value=C.refreshSec;
         launchApp();return;
       }
     }catch{}
