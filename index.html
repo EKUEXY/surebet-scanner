@@ -384,15 +384,11 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);
 <!-- BUDGET BAR -->
 <div class="budget-bar">
   <div class="budget-item" id="budget-month">
-    <span>Mois:</span><strong id="bm-used">0</strong><span>/500</span>
+    <span>Mois:</span><strong id="bm-used">0</strong><span id="bm-limit">/500</span>
     <div class="budget-track"><div class="budget-fill" id="bm-bar" style="width:0%"></div></div>
   </div>
-  <div class="budget-item" id="budget-day">
-    <span>Jour:</span><strong id="bd-used">0</strong><span>/16</span>
-    <div class="budget-track"><div class="budget-fill" id="bd-bar" style="width:0%"></div></div>
-  </div>
   <div class="budget-item" id="budget-session">
-    <span>Session:</span><strong id="bs-used">0</strong><span>/20</span>
+    <span>Session:</span><strong id="bs-used">0</strong><span>/100</span>
     <div class="budget-track"><div class="budget-fill" id="bs-bar" style="width:0%"></div></div>
   </div>
   <span class="cache-badge" id="cache-badge">💾 Cache: —</span>
@@ -734,7 +730,7 @@ const BUDGET={
     }catch{return this._fresh();}
   },
 
-  _fresh(){return{month:0,day:0,session:0,monthTs:Date.now(),dayTs:Date.now(),history:[]};},
+  _fresh(){return{month:0,day:0,session:0,monthTs:Date.now(),dayTs:Date.now(),history:[]};}, // day kept for backward compat
   _sameDay(ts){const d=new Date(ts),n=new Date();return d.getDate()===n.getDate()&&d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();},
   _sameMonth(ts){const d=new Date(ts),n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();},
 
@@ -743,9 +739,8 @@ const BUDGET={
   canFetch(n=1){
     const b=this.load();
     const monthLimit=C.monthlyBudget||500;
-    if(b.month+n > monthLimit) return{ok:false,reason:`Budget mensuel épuisé (${b.month}/${monthLimit})`};
-    if(b.day+n > 16) return{ok:false,reason:`Budget journalier épuisé (${b.day}/16)`};
-    if(b.session+n > 20) return{ok:false,reason:'Budget session épuisé (20/session) — redémarrez'};
+    if(b.month>=monthLimit)return{ok:false,reason:'Budget mensuel epuise ('+b.month+'/'+monthLimit+')'};
+    if(b.session>=100)return{ok:false,reason:'Session: 100 req atteintes - redemarrez'};
     return{ok:true};
   },
 
@@ -763,7 +758,7 @@ const BUDGET={
   remaining(){
     const b=this.load();
     const monthLimit=C.monthlyBudget||500;
-    return{month:monthLimit-b.month,day:Math.max(0,16-b.day),session:Math.max(0,20-b.session)};
+    return{month:Math.max(0,monthLimit-b.month),session:Math.max(0,100-b.session)};
   }
 };
 
@@ -956,12 +951,10 @@ let _rawCache={}; // raw API data per sport
 
 async function doFetch(manual=false){
   try{
-    // Budget check
-    const needed=SPORTS.length; // one request per sport
-    const budgetCheck=BUDGET.canFetch(needed);
+    // Budget check — only block if monthly quota truly exhausted
+    const budgetCheck=BUDGET.canFetch(1);
     if(!budgetCheck.ok){
       toast({matchName:'⚠️ '+budgetCheck.reason,roi:null,type:'warn'});
-      // Fall back to cache
       redetectFromCache();
       return;
     }
@@ -1084,7 +1077,9 @@ function redetectFromCache(){
 // ── Manual refresh ────────────────────────────────────────
 function manualRefresh(){
   const check=BUDGET.canFetch(1);
-  if(!check.ok){toast({matchName:'❌ '+check.reason,roi:null,type:'danger'});return;}
+  if(!check.ok){toast({matchName:'Quota mensuel atteint: '+check.reason,roi:null,type:'warn'});return;}
+  // Clear cache to force real API fetch
+  CACHE.clear();
   doFetch(true);
 }
 
@@ -1459,15 +1454,13 @@ function updBudgetBar(){
     const b=BUDGET.get();
     const monthLimit=C.monthlyBudget||500;
     const mPct=Math.min(100,b.month/monthLimit*100);
-    const dPct=Math.min(100,b.day/16*100);
-    const sPct=Math.min(100,b.session/20*100);
+    const sPct=Math.min(100,b.session/100*100);
     const mCls=mPct>90?'danger':mPct>70?'warn':'';
 
     document.getElementById('bm-used').textContent=b.month;
-    document.getElementById('bd-used').textContent=b.day;
+    document.getElementById('bm-limit').textContent='/'+monthLimit;
     document.getElementById('bs-used').textContent=b.session;
     document.getElementById('bm-bar').style.width=mPct+'%';
-    document.getElementById('bd-bar').style.width=dPct+'%';
     document.getElementById('bs-bar').style.width=sPct+'%';
     document.getElementById('bm-bar').className='budget-fill'+(mCls?' '+mCls:'');
     document.getElementById('budget-month').className='budget-item'+(mCls?' '+mCls:'');
@@ -1503,7 +1496,6 @@ function updDebug(apiCalls){
       +dbRow('API ce fetch',apiCalls||0)
       +dbRow('API ce mois',b.month+'/'+monthLimit,b.month>monthLimit*0.9?'r':b.month>monthLimit*0.7?'gold':'g')
       +dbRow('Restant mois',rem.month,'g')
-      +dbRow('Restant jour',rem.day,'g')
       +dbRow('Restant session',rem.session,'g')
       +'</div>'
       +'<div class="debug-card"><div class="debug-h">📊 Surebets actifs</div>'
