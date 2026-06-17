@@ -423,7 +423,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);
 </div>
 
 <!-- SIMULATION MODE BANNER -->
-<div id="sim-banner" style="display:none;background:rgba(96,165,250,0.08);border-bottom:1px solid rgba(96,165,250,0.25);padding:8px 14px;display:none;align-items:center;gap:10px;flex-wrap:wrap;">
+<div id="sim-banner" style="display:none;background:rgba(96,165,250,0.08);border-bottom:1px solid rgba(96,165,250,0.25);padding:8px 14px;align-items:center;gap:10px;flex-wrap:wrap;">
   <span style="font-size:12px;font-weight:700;color:#60a5fa;">💾 MODE SIMULATION</span>
   <span style="font-size:11px;color:var(--muted2);">Données en cache · Aucun appel API</span>
   <span style="font-family:var(--mono);font-size:11px;color:var(--muted2);" id="sim-cache-age"></span>
@@ -899,11 +899,11 @@ const ONT_KEYS=new Set(BM_DATA.map(b=>b.k));
 // ── Bookmaker helpers ─────────────────────────────────────
 function isOnt(key){
   const k=key.toLowerCase();
-  return [...ONT_KEYS].some(ok=>k===ok||k.includes(ok)||ok.includes(k));
+  return Array.from(ONT_KEYS).some(ok=>k===ok||k.includes(ok)||ok.includes(k));
 }
 function isFav(key){
   const k=key.toLowerCase();
-  return [...FAV].some(f=>k===f||k.includes(f)||f.includes(k));
+  return Array.from(FAV).some(f=>k===f||k.includes(f)||f.includes(k));
 }
 // Scope filter: determines which bookmakers are ALLOWED before arb calc
 function bmAllowed(key){
@@ -1033,8 +1033,8 @@ function updScopeInfo(){
   try{
     const el=document.getElementById('scope-info');
     if(!el)return;
-    const scopeMap={global:`${S.books} bookmakers mondiaux`,ontario:`33 bookmakers Ontario`,favorites:`${FAV.size} favori(s)`};
-    el.textContent=`${scopeMap[S.scope]||''} · ${S.games} matchs`;
+    var scopeMap={global:S.books+' bookmakers mondiaux',ontario:'33 bookmakers Ontario',favorites:FAV.size+' favori(s)'};
+    el.textContent=(scopeMap[S.scope]||'')+' · '+S.games+' matchs';
   }catch(e){}
 }
 
@@ -1160,7 +1160,7 @@ function redetectFromCache(){
     // History alerts for new surebets
     const news=S.sbs.filter(sb=>!S.hist.find(h=>h.gid===sb.gid));
     for(const sb of news){
-      S.hist.unshift({...sb,det:new Date().toISOString()});
+      var _sb=Object.assign({},sb);_sb.det=new Date().toISOString();S.hist.unshift(_sb);
       toast(sb); if(C.sound)beep();
     }
     if(news.length){
@@ -1362,7 +1362,7 @@ function renderScan(){
   try{
     const list=document.getElementById('scan-list');
     if(!list)return;
-    let sbs=[...S.sbs];
+    let sbs=S.sbs.slice();
     // Sport filter
     if(S.sport!=='all')sbs=sbs.filter(s=>s.sp.includes(S.sport));
     // ROI filter
@@ -1451,7 +1451,7 @@ function renderBooks(){
   try{
     document.getElementById('b1').textContent=BM_DATA.length;
     if(!ACTIVE_BM.size)ACTIVE_BM=new Set(BM_DATA.map(b=>b.k));
-    const sorted=[...BM_DATA].sort((a,b)=>{
+    const sorted=BM_DATA.slice().sort((a,b)=>{
       const af=FAV.has(a.k)?0:1,bf=FAV.has(b.k)?0:1;
       return af-bf||a.nom.localeCompare(b.nom);
     });
@@ -1469,12 +1469,12 @@ function renderBooks(){
 }
 function togFav(k){
   FAV.has(k)?FAV.delete(k):FAV.add(k);
-  try{localStorage.setItem('sbfav',JSON.stringify([...FAV]));}catch(e){}
+  try{localStorage.setItem('sbfav',JSON.stringify(Array.from(FAV)));}catch(e){}
   renderBooks(); redetectFromCache();
 }
 function togActive(k){
   ACTIVE_BM.has(k)?ACTIVE_BM.delete(k):ACTIVE_BM.add(k);
-  try{localStorage.setItem('sbactive',JSON.stringify([...ACTIVE_BM]));}catch(e){}
+  try{localStorage.setItem('sbactive',JSON.stringify(Array.from(ACTIVE_BM)));}catch(e){}
   renderBooks(); redetectFromCache();
 }
 
