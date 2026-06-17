@@ -1987,7 +1987,7 @@ function getBetSafety(sb){
     }else if(evtMin<=10){
       status='danger';
       label='❌ Moins de 10 min — Confirmation requise';
-      sub='Match très proche. Confirmez avant d'utiliser ces cotes.';
+      sub='Match très proche. Confirmez avant d\'utiliser ces cotes.';
     }else if(evtMin<=30){
       if(status!=='danger'){
         status='orange';
@@ -2013,16 +2013,20 @@ function getBetSafety(sb){
   return{status,label,sub,indicator,overrideable,cacheAgeSec,evtMin};
 }
 
+function simOverride(btn){
+  try{btn.parentElement.style.opacity='0.5';btn.disabled=true;btn.textContent='Cache utilise';}catch(e){}
+}
 function renderBetSafety(sb){
-  const safety=getBetSafety(sb);
-  const cls={ready:'bet-ready',warn:'bet-warn',orange:'bet-orange',danger:'bet-danger'}[safety.status]||'bet-warn';
-  const overrideBtn=safety.overrideable&&safety.status!=='ready'&&S.simMode
-    ?'<button class="bet-override" onclick="this.parentElement.style.opacity='0.5'">Continuer avec cache (risque assumé)</button>':'';
+  var safety=getBetSafety(sb);
+  var cls={ready:'bet-ready',warn:'bet-warn',orange:'bet-orange',danger:'bet-danger'}[safety.status]||'bet-warn';
+  var overrideBtn='';
+  if(safety.overrideable&&safety.status!=='ready'&&S.simMode){
+    overrideBtn='<button class="bet-override" onclick="simOverride(this)">Continuer avec cache (risque assumi)</button>';
+  }
+  var ageStr=safety.cacheAgeSec?' - Cache: '+fmtAge(safety.cacheAgeSec):'';
+  var evtStr=(safety.evtMin!==null&&safety.evtMin>0)?' - Match: dans '+fmtDuration(safety.evtMin*60000):'';
   return'<div class="'+cls+'"><div class="bet-label">'+safety.label+'</div>'
-    +'<div class="bet-sub">'+safety.sub
-    +(safety.cacheAgeSec?(' · Cache: '+fmtAge(safety.cacheAgeSec)):'')
-    +(safety.evtMin!==null&&safety.evtMin>0?' · Match: dans '+fmtDuration(safety.evtMin*60000):'')
-    +'</div>'+overrideBtn+'</div>';
+    +'<div class="bet-sub">'+safety.sub+ageStr+evtStr+'</div>'+overrideBtn+'</div>';
 }
 
 // ═══════════════════════════════════════════════════════════
