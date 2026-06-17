@@ -312,6 +312,23 @@ canvas{display:block;width:100%!important;}
 .toast-b{font-size:11px;color:var(--muted2);line-height:1.5;}
 .toast-r{font-size:18px;font-weight:700;color:var(--gold);}
 
+/* SIMULATION MODE */
+.sim-active .sbcard{border-top:2px solid rgba(96,165,250,0.3);}
+
+/* BET SAFETY INDICATORS */
+.bet-ready{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);border-radius:8px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green);}
+.bet-warn{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:12px;color:var(--gold);}
+.bet-orange{background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.3);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:12px;color:var(--orange);}
+.bet-danger{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:12px;color:var(--red);}
+.bet-label{font-weight:700;margin-bottom:3px;}
+.bet-sub{font-weight:400;opacity:0.85;line-height:1.5;}
+.bet-override{background:none;border:1px solid var(--border2);color:var(--muted2);padding:4px 10px;border-radius:4px;cursor:pointer;font-size:10px;margin-top:6px;display:inline-block;}
+.bet-override:hover{color:var(--white);}
+
+/* SESSION PANEL */
+.session-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.session-h{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--blue);margin-bottom:12px;}
+
 footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);
   border-top:1px solid var(--border);line-height:1.8;}
 
@@ -375,6 +392,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);
   <div class="tr">
     <div class="tclock">⏱ <span id="cdtxt">——:——</span></div>
     <button class="ticon" id="sndbtn" onclick="togSnd()">🔔</button>
+    <button class="ticon" id="simbtn" onclick="togSimMode()" title="Mode Simulation">💾</button>
     <button class="ticon" onclick="goTab('debug')">🔧</button>
     <button class="ticon" onclick="goTab('settings')">⚙️</button>
     <button class="ticon" onclick="doLogout()">✕</button>
@@ -404,6 +422,28 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);
   <div class="scope-info" id="scope-info">Chargement…</div>
 </div>
 
+<!-- SIMULATION MODE BANNER -->
+<div id="sim-banner" style="display:none;background:rgba(96,165,250,0.08);border-bottom:1px solid rgba(96,165,250,0.25);padding:8px 14px;display:none;align-items:center;gap:10px;flex-wrap:wrap;">
+  <span style="font-size:12px;font-weight:700;color:#60a5fa;">💾 MODE SIMULATION</span>
+  <span style="font-size:11px;color:var(--muted2);">Données en cache · Aucun appel API</span>
+  <span style="font-family:var(--mono);font-size:11px;color:var(--muted2);" id="sim-cache-age"></span>
+  <span style="font-family:var(--mono);font-size:11px;color:var(--muted2);">Dernière MAJ: <span id="sim-last-fetch">—</span></span>
+  <div style="margin-left:auto;display:flex;gap:8px;">
+    <button onclick="exitSimMode()" style="background:var(--green);color:var(--bg);border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">↻ Actualiser maintenant</button>
+    <button onclick="continueSimMode()" style="background:none;border:1px solid rgba(96,165,250,0.4);color:#60a5fa;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">Continuer en cache</button>
+  </div>
+</div>
+
+<!-- CACHE STARTUP BANNER (shown on load if cached data exists) -->
+<div id="cache-startup-banner" style="display:none;background:rgba(167,139,250,0.08);border-bottom:1px solid rgba(167,139,250,0.25);padding:8px 14px;align-items:center;gap:10px;flex-wrap:wrap;">
+  <span style="font-size:12px;font-weight:700;color:var(--purple);">⚡ Données en cache disponibles</span>
+  <span style="font-size:11px;color:var(--muted2);" id="startup-cache-info">—</span>
+  <div style="margin-left:auto;display:flex;gap:8px;">
+    <button onclick="useStartupCache()" style="background:var(--purple);color:var(--bg);border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">📂 Utiliser le cache</button>
+    <button onclick="fetchFreshOnStartup()" style="background:none;border:1px solid rgba(52,211,153,0.4);color:var(--green);padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;">↻ Fetch données fraîches</button>
+  </div>
+</div>
+
 <div class="statsbar">
   <div class="sc"><div class="sc-l">Surebets</div><div class="sc-v g" id="s0">—</div><div class="sc-s">actifs</div></div>
   <div class="sc"><div class="sc-l">Meilleur ROI</div><div class="sc-v gold" id="s1">—</div><div class="sc-s">opportunité</div></div>
@@ -420,6 +460,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);
   <div class="tab" onclick="goTab('calc')">Calculateur</div>
   <div class="tab" onclick="goTab('hist')">Historique <span class="tbadge" id="b2">0</span></div>
   <div class="tab" onclick="goTab('debug')">Debug 🔧</div>
+  <div class="tab" onclick="goTab('session')">Session 📈</div>
   <div class="tab" onclick="goTab('settings')">Paramètres</div>
 </div>
 
@@ -603,6 +644,16 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);
   </div>
 </div>
 
+<!-- ── SESSION SUMMARY ── -->
+<div class="panel" id="panel-session">
+  <div class="slabel">Résumé de session</div>
+  <div class="dash-grid" id="session-stats"></div>
+  <div style="margin-top:20px">
+    <div class="slabel">Recommandation de pari</div>
+    <div id="session-bet-advice"></div>
+  </div>
+</div>
+
 </div><!-- .main -->
 <footer>SureBet Pro v4 · Cache intelligent · Budget 500 req/mois · 33 Bookmakers iGaming Ontario · ConnexOntario 1-866-531-2600</footer>
 </div><!-- #app -->
@@ -641,6 +692,13 @@ let S={
   // Debug
   cacheHits:0,cacheMisses:0,
   validatedEvents:0,rejectedEvents:0,
+  // Simulation Mode
+  simMode:false,
+  lastRealFetch:null,
+  sessionApiCalls:0,
+  sessionCacheHits:0,
+  sessionCacheMisses:0,
+  sessionStart:Date.now(),
 };
 
 // ── FAVORITES & ACTIVE BOOKMAKERS ────────────────────────
@@ -707,6 +765,42 @@ const CACHE={
   totalHitRate(){
     const t=S.cacheHits+S.cacheMisses;
     return t>0?Math.round(S.cacheHits/t*100):0;
+  },
+
+  // Load all sports from localStorage on startup (persist between restarts)
+  loadFromStorage(){
+    let loaded=0;
+    SPORTS.forEach(sp=>{
+      try{
+        const raw=localStorage.getItem(this._key(sp));
+        if(raw){
+          const e=JSON.parse(raw);
+          if(e&&e.data&&e.ts){
+            this.store[sp]=e; // load even if stale — let user decide
+            loaded++;
+          }
+        }
+      }catch(ex){}
+    });
+    return loaded;
+  },
+
+  // Oldest ts across all cached sports
+  oldestTs(){
+    let oldest=Infinity;
+    Object.values(this.store).forEach(e=>{if(e.ts<oldest)oldest=e.ts;});
+    return oldest===Infinity?null:oldest;
+  },
+
+  // Newest ts across all cached sports
+  newestTs(){
+    let newest=0;
+    Object.values(this.store).forEach(e=>{if(e.ts>newest)newest=e.ts;});
+    return newest===0?null:newest;
+  },
+
+  hasAnyData(){
+    return Object.keys(this.store).length>0;
   }
 };
 
@@ -951,6 +1045,11 @@ let _rawCache={}; // raw API data per sport
 
 async function doFetch(manual=false){
   try{
+    // Block API call if sim mode is active (unless explicitly exiting sim mode)
+    if(S.simMode&&!manual){
+      redetectFromCache();
+      return;
+    }
     // Budget check — only block if monthly quota truly exhausted
     const budgetCheck=BUDGET.canFetch(1);
     if(!budgetCheck.ok){
@@ -989,6 +1088,8 @@ async function doFetch(manual=false){
     // Consume budget for actual API calls made
     if(apiCallsThisFetch>0){
       BUDGET.consume(apiCallsThisFetch);
+      S.sessionApiCalls+=apiCallsThisFetch;
+      S.lastRealFetch=Date.now();
     }
 
     S.books=books.size; S.games=games;
@@ -1338,7 +1439,7 @@ function renderScan(){
         +'<div class="cfc"><div class="cfl">Profit net</div><div class="cfv gold">+$'+sb.profit+'</div></div>'
         +'<div class="cfc"><div class="cfl">ROI</div><div class="cfv '+cls+'">'+sb.roi+'%</div></div>'
         +'<div class="cfc"><div class="cfl">Qualité</div><div class="cfv blue">'+sb.qs+'/100</div></div>'
-        +'</div>'+warnBar+staleBar+'</div>';
+        +'</div>'+warnBar+staleBar+renderBetSafety(sb)+'</div>';
     }).join('');
   }catch(e){console.error('renderScan:',e);}
 }
@@ -1669,6 +1770,7 @@ function goTab(id){
     document.querySelectorAll('.tab').forEach(t=>{if(t.getAttribute('onclick')==="goTab('"+id+"')")t.classList.add('on');});
     if(id==='dash')setTimeout(updateCharts,80);
     if(id==='debug')updDebug(0);
+    if(id==='session')setTimeout(renderSession,50);
   }catch(e){}
 }
 function spLabel(s){
@@ -1701,6 +1803,16 @@ function toast(sb){
 function updNxt(){try{const e=document.getElementById('nxt');if(e)e.textContent=fmtDuration(S.cdSec*1000);}catch(e){}}
 function togSnd(){C.sound=!C.sound;updSndBtn();saveC();}
 function updSndBtn(){try{document.getElementById('sndbtn').textContent=C.sound?'🔔':'🔕';}catch(e){}}
+function updSimBtn(){
+  try{
+    const btn=document.getElementById('simbtn');
+    if(!btn)return;
+    btn.textContent=S.simMode?'💾':'🌐';
+    btn.style.borderColor=S.simMode?'rgba(96,165,250,0.5)':'';
+    btn.style.color=S.simMode?'#60a5fa':'';
+    btn.title=S.simMode?'Simulation: désactiver':'Activer Mode Simulation';
+  }catch(e){}
+}
 function beep(){
   try{
     const ctx=new(window.AudioContext||window.webkitAudioContext)();
@@ -1730,6 +1842,236 @@ function startCD(){
       updNxt();
     }catch(e){}
   },1000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SIMULATION MODE
+// ═══════════════════════════════════════════════════════════
+
+function enterSimMode(){
+  S.simMode=true;
+  // Stop auto-countdown from triggering API calls
+  clearInterval(S.cdInt);
+  try{
+    const banner=document.getElementById('sim-banner');
+    if(banner){banner.style.display='flex';}
+    document.getElementById('cache-startup-banner').style.display='none';
+    document.body.classList.add('sim-active');
+    document.getElementById('rfbtn').textContent='💾 Cache actif';
+    document.getElementById('rfbtn').className='rbtn ml cache-only';
+    updSimBanner();
+  }catch(e){}
+  // Update sim banner every 10s for age display
+  S._simInt=setInterval(updSimBanner,10000);
+  try{updSimBtn();}catch(e){}
+}
+
+function exitSimMode(){
+  S.simMode=false;
+  clearInterval(S._simInt);
+  try{
+    document.getElementById('sim-banner').style.display='none';
+    document.body.classList.remove('sim-active');
+    document.getElementById('rfbtn').textContent='↻ Actualiser';
+    document.getElementById('rfbtn').className='rbtn ml';
+  }catch(e){}
+  CACHE.clear();
+  try{updSimBtn();}catch(e){}
+  startCD();
+  doFetch(true);
+}
+
+function continueSimMode(){
+  // Dismiss startup banner, stay in sim mode
+  try{document.getElementById('cache-startup-banner').style.display='none';}catch(e){}
+  enterSimMode();
+  redetectFromCache();
+}
+
+function updSimBanner(){
+  try{
+    const ts=CACHE.newestTs();
+    if(!ts)return;
+    const ageSec=Math.round((Date.now()-ts)/1000);
+    document.getElementById('sim-cache-age').textContent='Âge cache: '+fmtAge(ageSec);
+    document.getElementById('sim-last-fetch').textContent=
+      S.lastRealFetch?new Date(S.lastRealFetch).toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'}):'—';
+  }catch(e){}
+}
+
+function togSimMode(){
+  if(S.simMode)exitSimMode();
+  else enterSimMode();
+}
+
+// ── Startup cache handling ────────────────────────────────
+function checkStartupCache(){
+  const loaded=CACHE.loadFromStorage();
+  if(loaded>0){
+    const ts=CACHE.newestTs();
+    const ageSec=ts?Math.round((Date.now()-ts)/1000):null;
+    try{
+      const banner=document.getElementById('cache-startup-banner');
+      const info=document.getElementById('startup-cache-info');
+      if(banner&&info){
+        info.textContent=loaded+' sports en cache · Âge: '+(ageSec!==null?fmtAge(ageSec):'inconnu');
+        banner.style.display='flex';
+      }
+    }catch(e){}
+    return true;
+  }
+  return false;
+}
+
+function useStartupCache(){
+  try{document.getElementById('cache-startup-banner').style.display='none';}catch(e){}
+  enterSimMode();
+  redetectFromCache();
+  toast({matchName:'Cache chargé — Mode Simulation actif',roi:null});
+}
+
+function fetchFreshOnStartup(){
+  try{document.getElementById('cache-startup-banner').style.display='none';}catch(e){}
+  startCD();
+  doFetch(true);
+}
+
+// ═══════════════════════════════════════════════════════════
+// BET SAFETY SYSTEM
+// ═══════════════════════════════════════════════════════════
+
+function getBetSafety(sb){
+  // Data age (seconds since cache was populated)
+  const cacheAgeSec=sb.fetchedAt?Math.round((Date.now()-sb.fetchedAt)/1000):999;
+  // Event proximity (ms until event start)
+  const evtMs=sb.t?new Date(sb.t)-Date.now():null;
+  const evtMin=evtMs!==null?evtMs/60000:null;
+
+  let status='ready'; // ready | warn | orange | danger
+  let label='';
+  let sub='';
+  let indicator='';
+  let overrideable=true;
+
+  // ── Data freshness thresholds ─────────────────────────
+  if(cacheAgeSec<60){
+    status='ready';
+    label='✅ Prêt à analyser';
+    sub='Données fraîches · Cotes récentes.';
+    indicator='green';
+  }else if(cacheAgeSec<300){
+    status='warn';
+    label='⚠️ Rafraîchissement recommandé';
+    sub='Les cotes ont pu changer. Vérifiez avant de parier.';
+    indicator='yellow';
+  }else if(cacheAgeSec<900){
+    status='orange';
+    label='🟠 Données vieillissantes';
+    sub='Cache > 5 min. Rafraîchissement fortement recommandé avant tout pari.';
+    indicator='orange';
+  }else{
+    status='danger';
+    label='❌ Rafraîchissement requis';
+    sub='Données > 15 min. Ne pariez pas sans actualiser.';
+    indicator='red';
+    overrideable=true;
+  }
+
+  // ── Event proximity overrides ─────────────────────────
+  if(evtMin!==null){
+    if(evtMin<=5){
+      status='danger';
+      label='❌ Événement imminent — Actualisation requise';
+      sub='Match dans moins de 5 minutes. Cotes probablement obsolètes.';
+      overrideable=false;
+    }else if(evtMin<=10){
+      status='danger';
+      label='❌ Moins de 10 min — Confirmation requise';
+      sub='Match très proche. Confirmez avant d'utiliser ces cotes.';
+    }else if(evtMin<=30){
+      if(status!=='danger'){
+        status='orange';
+        label='🟠 Match dans 30 min — Vérifiez les cotes';
+        sub='Événement proche. Rafraîchissement recommandé.';
+        indicator='orange';
+      }
+    }else if(evtMin<=60){
+      if(status==='ready'){
+        status='warn';
+        label='⚠️ Match dans 1h — Vérifiez avant de parier';
+        sub='Rafraîchissement conseillé avant placement.';
+        indicator='yellow';
+      }
+    }else if(evtMin>24*60){
+      // Far future — sim mode fine for analysis
+      if(status==='ready'){
+        sub='Événement lointain. Mode simulation acceptable pour analyse.';
+      }
+    }
+  }
+
+  return{status,label,sub,indicator,overrideable,cacheAgeSec,evtMin};
+}
+
+function renderBetSafety(sb){
+  const safety=getBetSafety(sb);
+  const cls={ready:'bet-ready',warn:'bet-warn',orange:'bet-orange',danger:'bet-danger'}[safety.status]||'bet-warn';
+  const overrideBtn=safety.overrideable&&safety.status!=='ready'&&S.simMode
+    ?'<button class="bet-override" onclick="this.parentElement.style.opacity='0.5'">Continuer avec cache (risque assumé)</button>':'';
+  return'<div class="'+cls+'"><div class="bet-label">'+safety.label+'</div>'
+    +'<div class="bet-sub">'+safety.sub
+    +(safety.cacheAgeSec?(' · Cache: '+fmtAge(safety.cacheAgeSec)):'')
+    +(safety.evtMin!==null&&safety.evtMin>0?' · Match: dans '+fmtDuration(safety.evtMin*60000):'')
+    +'</div>'+overrideBtn+'</div>';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SESSION SUMMARY
+// ═══════════════════════════════════════════════════════════
+
+function renderSession(){
+  try{
+    const b=BUDGET.get();
+    const monthLimit=C.monthlyBudget||500;
+    const rem=BUDGET.remaining();
+    const sessionDurMin=Math.round((Date.now()-S.sessionStart)/60000);
+    const totalReqs=S.sessionApiCalls||b.session;
+    const saved=S.sessionCacheHits;
+    const hitRate=S.cacheHits+S.cacheMisses>0?Math.round(S.cacheHits/(S.cacheHits+S.cacheMisses)*100):0;
+    // Estimate days until quota exhaustion
+    const daysElapsed=Math.max(1,(Date.now()-b.monthTs)/(1000*3600*24));
+    const dailyRate=b.month/daysElapsed;
+    const daysLeft=dailyRate>0?Math.round(rem.month/dailyRate):999;
+
+    document.getElementById('session-stats').innerHTML=
+      '<div class="session-card"><div class="session-h">🌐 Appels API</div>'
+      +dbRow('Req réelles ce mois',b.month+'/'+monthLimit)
+      +dbRow('Req restantes',rem.month,'g')
+      +dbRow('Req cette session',b.session)
+      +dbRow('Taux moyen/jour',dailyRate.toFixed(1)+' req')
+      +dbRow('Jours avant quota',daysLeft===999?'∞':daysLeft+' jours',daysLeft>30?'g':daysLeft>7?'gold':'r')
+      +'</div>'
+      +'<div class="session-card"><div class="session-h">💾 Cache</div>'
+      +dbRow('Cache hits',S.cacheHits,'g')
+      +dbRow('Cache misses',S.cacheMisses)
+      +dbRow('Taux de hit',hitRate+'%',hitRate>70?'g':'gold')
+      +dbRow('Requêtes économisées','~'+saved)
+      +dbRow('Durée session',sessionDurMin+' min')
+      +dbRow('Mode actuel',S.simMode?'Simulation 💾':'Live 🟢',S.simMode?'blue':'g')
+      +'</div>'
+      +'<div class="session-card"><div class="session-h">📊 Surebets</div>'
+      +dbRow('Surebets détectés',S.sbs.length,'g')
+      +dbRow('ROI max',S.sbs.length?S.sbs[0].roi+'%':'—','gold')
+      +dbRow('Historique total',S.hist.length)
+      +dbRow('Sports actifs',S.sport==='all'?'Tous':S.sport)
+      +dbRow('Mode scope',S.scope)
+      +dbRow('Bookmakers actifs',ACTIVE_BM.size+'/33')
+      +'</div>'
+      +'<div class="session-card"><div class="session-h">⚠️ Conseil de pari</div>'
+      +(S.sbs.length>0?renderBetSafety(S.sbs[0])
+        :'<div class="bet-warn"><div class="bet-label">Aucun surebet actif</div><div class="bet-sub">Aucune opportunité détectée dans le mode actuel.</div></div>')
+      +'</div>';
+  }catch(e){console.error('renderSession:',e);}
 }
 
 // ═══════════════════════════════════════════════════════════
