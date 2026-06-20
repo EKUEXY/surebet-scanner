@@ -337,9 +337,10 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 <!-- SIMULATION MODE BANNER -->
 <div class="sim-bar" id="sim-bar">
   <span class="sim-label">&#128190; SIMULATION MODE</span>
-  <span class="sim-meta" id="sim-age">Cache: --</span>
-  <span class="sim-meta">Last fetch: <span id="sim-ts">--</span></span>
-  <span class="sim-meta" style="color:var(--green);font-weight:700;">NO API CALLS ACTIVE</span>
+  <span class="sim-meta">Status: <strong style="color:var(--green);" id="sim-status">Using cached data only</strong></span>
+  <span class="sim-meta">Cache age: <span id="sim-age">No cached data loaded</span></span>
+  <span class="sim-meta">Last API fetch: <span id="sim-ts">Never</span></span>
+  <span class="sim-meta" id="sim-nextaction" style="color:var(--gold);">Next action: Press "Refresh Now" to load odds.</span>
   <div style="margin-left:auto;display:flex;gap:8px;">
     <button class="sim-btn go" onclick="exitSim()">&#8635; Refresh Now</button>
     <button class="sim-btn stay" onclick="keepSim()">Continue with Cache</button>
@@ -358,10 +359,16 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 
 <!-- BUDGET BAR -->
 <div class="budget-bar">
-  <div class="bi" id="bi-month"><span>Month:</span><strong id="bm-used">0</strong><span id="bm-lim">/500</span><div class="btrack"><div class="bfill" id="bm-bar" style="width:0%"></div></div></div>
-  <div class="bi" id="bi-session"><span>Session:</span><strong id="bs-used">0</strong><span>/100</span><div class="btrack"><div class="bfill" id="bs-bar" style="width:0%"></div></div></div>
+  <div class="bi" id="bi-month"><span>Month (hard limit):</span><strong id="bm-used">0</strong><span id="bm-lim">/500</span><div class="btrack"><div class="bfill" id="bm-bar" style="width:0%"></div></div></div>
+  <div class="bi" id="bi-day"><span>Today:</span><strong id="bd-used">0</strong><span id="bd-rec">/15 rec</span><div class="btrack"><div class="bfill" id="bd-bar" style="width:0%"></div></div></div>
+  <div class="bi" id="bi-session"><span>Session:</span><strong id="bs-used">0</strong><span id="bs-rec">/10 rec</span><div class="btrack"><div class="bfill" id="bs-bar" style="width:0%"></div></div></div>
   <span class="cache-pill" id="cache-pill">&#128190; Cache: --</span>
+  <button class="rbtn" style="padding:3px 10px;font-size:11px;" onclick="goTab('budget')">&#128202; Budget Details</button>
   <span style="margin-left:auto;font-size:11px;color:var(--muted);" id="last-ts">Never refreshed</span>
+</div>
+<div id="low-budget-rec" style="display:none;background:rgba(248,113,113,0.08);border-bottom:1px solid rgba(248,113,113,0.25);padding:8px 14px;font-size:12px;color:var(--red);align-items:center;gap:10px;">
+  <span>&#9888; Low API budget — recommend: Simulation Mode, cache-first browsing, refresh only watchlisted events.</span>
+  <button class="rbtn" style="margin-left:auto;padding:3px 10px;font-size:11px;" onclick="enterSim()">Enable Simulation Mode</button>
 </div>
 
 <!-- SCOPE SELECTOR -->
@@ -387,6 +394,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div class="tab on" onclick="goTab('scan')">Surebets <span class="tbadge" id="b0">0</span></div>
   <div class="tab" onclick="goTab('dash')">Dashboard</div>
   <div class="tab" onclick="goTab('cache')">Cache &#128190;</div>
+  <div class="tab" onclick="goTab('budget')">Budget &#128202;</div>
   <div class="tab" onclick="goTab('books')">Bookmakers <span class="tbadge">33</span></div>
   <div class="tab" onclick="goTab('calc')">Calculator</div>
   <div class="tab" onclick="goTab('hist')">History <span class="tbadge" id="b2">0</span></div>
@@ -424,6 +432,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
       <option value="time">Event Time</option>
       <option value="fresh">Freshness</option>
     </select>
+    <button class="rbtn" id="oddsfmtbtn" onclick="toggleOddsFormat()">Decimal</button>
     <button class="rbtn ml" id="rfbtn" onclick="manualRefresh()">&#8635; Refresh</button>
   </div>
   <div id="scan-list"></div>
@@ -456,6 +465,19 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div class="slabel">Cache Diagnostics Report</div>
   <div class="diag-grid" id="diag-content">
     <div class="diag-card"><div class="diag-h">Loading...</div></div>
+  </div>
+</div>
+
+<!-- BUDGET TAB -->
+<div class="panel" id="panel-budget">
+  <div class="slabel">API Budget Management</div>
+  <div class="diag-grid" id="budget-content">
+    <div class="diag-card"><div class="diag-h">Loading...</div></div>
+  </div>
+  <div class="slabel" style="margin-top:16px">Quick Actions</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="rbtn" onclick="forceRefresh()">&#8635; Force Refresh</button>
+    <button class="rbtn" style="border-color:rgba(248,113,113,.4);color:var(--red)" onclick="emergencyRefresh()">&#9889; Emergency Refresh</button>
   </div>
 </div>
 
@@ -577,7 +599,7 @@ var C = {
 // UI refreshes (redetect, renderScan, etc.) do NOT count
 var S = {
   sbs:[], hist:[], books:0, games:0,
-  sport:'all', roiFilter:'cfg', scope:'global',
+  sport:'all', roiFilter:'cfg', scope:'global', oddsFormat:'decimal',
   scanDurSec:0, fetchTime:null,
   roiHist:[], volHist:[], apiHist:[],
   cdSec:0, cdInt:null, _simInt:null,
@@ -747,39 +769,95 @@ function cacheSportAge(sp) {
 // BUDGET MANAGER
 // ═══════════════════════════════════════════════════════════
 var BUDGET_KEY = 'sb_budget_v4';
+var SESSION_TIMEOUT_MS = 30*60*1000; // 30 min idle = new session
 
 function budgetLoad() {
   try {
     var raw = localStorage.getItem(BUDGET_KEY);
-    if (!raw) return {month:0, session:0, monthTs:Date.now(), history:[]};
+    if (!raw) return budgetFresh();
     var b = JSON.parse(raw);
     var now = new Date(); var mt = new Date(b.monthTs);
+    // Monthly reset (hard limit window)
     if (mt.getMonth() !== now.getMonth() || mt.getFullYear() !== now.getFullYear()) {
       b.month = 0; b.monthTs = Date.now();
+      b.dayCounts = {}; // reset daily history too on new month boundary edge case
     }
-    if (!b.session) b.session = 0;
+    // Daily soft counter reset
+    var todayKey = new Date().toISOString().slice(0,10);
+    if (!b.dayCounts) b.dayCounts = {};
+    if (b.today !== todayKey) { b.today = todayKey; b.todayCount = 0; }
+    // Session soft reset — 30 min idle OR new calendar day
+    var lastActive = b.lastActive || 0;
+    var idleMs = Date.now() - lastActive;
+    if (idleMs > SESSION_TIMEOUT_MS || b.sessionDay !== todayKey) {
+      b.session = 0; b.sessionDay = todayKey; b.sessionStart = Date.now();
+    }
+    if (b.session === undefined) b.session = 0;
+    if (b.todayCount === undefined) b.todayCount = 0;
+    if (!b.history) b.history = [];
     return b;
-  } catch(e) { return {month:0, session:0, monthTs:Date.now(), history:[]}; }
+  } catch(e) { return budgetFresh(); }
+}
+
+function budgetFresh() {
+  var todayKey = new Date().toISOString().slice(0,10);
+  return {month:0, session:0, monthTs:Date.now(), history:[],
+    today:todayKey, todayCount:0, dayCounts:{}, sessionDay:todayKey,
+    sessionStart:Date.now(), lastActive:Date.now()};
 }
 
 function budgetSave(b) { try { localStorage.setItem(BUDGET_KEY, JSON.stringify(b)); } catch(e) {} }
 
+// ── HARD LIMIT: only the monthly quota blocks anything ──────
 function budgetCanFetch() {
   var b = budgetLoad();
   var lim = C.monthlyBudget || 500;
-  if (b.month >= lim) return {ok:false, reason:'Monthly budget exhausted ('+b.month+'/'+lim+')'};
-  if (b.session >= 100) return {ok:false, reason:'Session limit reached (100) - restart app'};
-  return {ok:true};
+  if (b.month >= lim) return {ok:false, hard:true, reason:'Monthly API quota exhausted.'};
+  return {ok:true, hard:false};
+}
+
+// ── SOFT CHECK: returns warning info, never blocks ──────────
+function budgetSoftStatus() {
+  var b = budgetLoad();
+  var lim = C.monthlyBudget || 500;
+  var remaining = Math.max(0, lim - b.month);
+  var now = new Date();
+  var daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  var daysRemaining = Math.max(1, daysInMonth - now.getDate() + 1);
+  var recommendedDaily = Math.max(1, Math.round(remaining / daysRemaining));
+  var recommendedSession = Math.max(1, Math.round(recommendedDaily / 2)); // ~2 sessions/day assumption
+  return {
+    remaining: remaining,
+    daysRemaining: daysRemaining,
+    recommendedDaily: recommendedDaily,
+    recommendedSession: recommendedSession,
+    todayCount: b.todayCount || 0,
+    sessionCount: b.session || 0,
+    dailyExceeded: (b.todayCount||0) > recommendedDaily,
+    sessionExceeded: (b.session||0) > recommendedSession
+  };
 }
 
 function budgetConsume(n) {
   var b = budgetLoad();
-  b.month += n; b.session += n;
+  b.month += n;
+  b.session += n;
+  b.todayCount = (b.todayCount||0) + n;
+  b.lastActive = Date.now();
+  var todayKey = new Date().toISOString().slice(0,10);
+  b.dayCounts[todayKey] = (b.dayCounts[todayKey]||0) + n;
   b.history = b.history || [];
   b.history.push({ts:Date.now(), n:n});
-  if (b.history.length > 100) b.history = b.history.slice(-100);
+  if (b.history.length > 300) b.history = b.history.slice(-300);
   budgetSave(b);
   return b;
+}
+
+function budgetTouch() {
+  // Keep session alive on any user interaction without consuming
+  var b = budgetLoad();
+  b.lastActive = Date.now();
+  budgetSave(b);
 }
 
 function budgetGet() { return budgetLoad(); }
@@ -787,7 +865,54 @@ function budgetGet() { return budgetLoad(); }
 function budgetRemaining() {
   var b = budgetLoad();
   var lim = C.monthlyBudget || 500;
-  return {month: Math.max(0, lim-b.month), session: Math.max(0, 100-b.session)};
+  return {month: Math.max(0, lim-b.month), session: b.session||0};
+}
+
+// ── Estimated quota exhaustion date ──────────────────────────
+function budgetExhaustionDate() {
+  var b = budgetLoad();
+  var lim = C.monthlyBudget || 500;
+  var remaining = Math.max(0, lim - b.month);
+  var dayCounts = b.dayCounts || {};
+  var days = Object.keys(dayCounts);
+  var totalUsed = 0;
+  for (var i=0;i<days.length;i++) totalUsed += dayCounts[days[i]];
+  var avgPerDay = days.length > 0 ? totalUsed/days.length : 1;
+  if (avgPerDay <= 0) avgPerDay = 1;
+  var daysLeft = Math.ceil(remaining / avgPerDay);
+  var exhaustDate = new Date(Date.now() + daysLeft*24*3600*1000);
+  return {date: exhaustDate, daysLeft: daysLeft, avgPerDay: avgPerDay};
+}
+
+// ── API usage history dashboard data ─────────────────────────
+function budgetUsageHistory() {
+  var b = budgetLoad();
+  var dayCounts = b.dayCounts || {};
+  var todayKey = new Date().toISOString().slice(0,10);
+  var yesterdayKey = new Date(Date.now()-86400000).toISOString().slice(0,10);
+  var today = dayCounts[todayKey] || 0;
+  var yesterday = dayCounts[yesterdayKey] || 0;
+  var weekTotal = 0;
+  for (var i=0;i<7;i++) {
+    var k = new Date(Date.now()-i*86400000).toISOString().slice(0,10);
+    weekTotal += dayCounts[k] || 0;
+  }
+  var days = Object.keys(dayCounts);
+  var avgPerDay = days.length > 0 ? (days.reduce(function(s,k){return s+dayCounts[k];},0)/days.length) : 0;
+  var maxSession = 0;
+  var hist = b.history || [];
+  // crude max-in-session estimate: cluster by 30-min gaps
+  var cluster = 0; var lastTs = 0;
+  for (var i=0;i<hist.length;i++) {
+    if (lastTs && (hist[i].ts-lastTs) > SESSION_TIMEOUT_MS) cluster = 0;
+    cluster += hist[i].n;
+    if (cluster > maxSession) maxSession = cluster;
+    lastTs = hist[i].ts;
+  }
+  return {
+    today: today, yesterday: yesterday, week: weekTotal, month: b.month,
+    avgPerDay: +avgPerDay.toFixed(1), avgPerSession: b.session||0, maxSession: maxSession
+  };
 }
 
 // ── HELPERS ───────────────────────────────────────────────
@@ -836,6 +961,25 @@ function fmtAge(sec) {
   if (sec < 60) return sec+'s';
   if (sec < 3600) return Math.floor(sec/60)+'min';
   return Math.floor(sec/3600)+'h'+Math.floor((sec%3600)/60)+'min';
+}
+
+// Decimal -> American odds conversion
+function decToAmerican(dec) {
+  if (dec >= 2) return '+'+Math.round((dec-1)*100);
+  return '-'+Math.round(100/(dec-1));
+}
+
+function fmtOdd(dec) {
+  if (S.oddsFormat === 'american') return decToAmerican(dec);
+  return dec.toFixed(2);
+}
+
+function toggleOddsFormat() {
+  S.oddsFormat = S.oddsFormat === 'decimal' ? 'american' : 'decimal';
+  try { localStorage.setItem('sb_oddsfmt', S.oddsFormat); } catch(e) {}
+  var btn = document.getElementById('oddsfmtbtn');
+  if (btn) btn.textContent = S.oddsFormat === 'decimal' ? 'Decimal' : 'American';
+  renderScan();
 }
 
 function fmtDur(ms) {
@@ -923,6 +1067,7 @@ function launchApp() {
   } catch(e) {}
 
   updSndBtn(); renderHist(); renderBooks(); updBudgetBar();
+  var ofb=document.getElementById('oddsfmtbtn'); if(ofb) ofb.textContent = S.oddsFormat==='decimal'?'Decimal':'American';
 
   var loaded = cacheLoadFromStorage();
   if (loaded > 0) { showStartupBanner(loaded); }
@@ -998,11 +1143,26 @@ function togSim() { if (S.simMode) exitSim(); else enterSim(); }
 
 function updSimBar() {
   var ts = cacheNewestTs();
-  if (!ts) return;
-  elSet('sim-age', 'Cache age: '+fmtAge(Math.round((Date.now()-ts)/1000)));
+  if (!ts) {
+    elSet('sim-age', 'No cached data loaded');
+    elSet('sim-ts', 'Never');
+    elSet('sim-status', 'No data available');
+    elSet('sim-nextaction', 'Next action: Press "Refresh Now" to load odds.');
+    return;
+  }
+  elSet('sim-age', fmtAge(Math.round((Date.now()-ts)/1000)));
+  elSet('sim-status', 'Using cached data only');
   if (S.lastRealFetch) {
     var d = new Date(S.lastRealFetch);
     elSet('sim-ts', d.toLocaleTimeString('en-CA', {hour:'2-digit', minute:'2-digit'}));
+  } else {
+    elSet('sim-ts', 'Never');
+  }
+  var ageSec = Math.round((Date.now()-ts)/1000);
+  if (ageSec > 900) {
+    elSet('sim-nextaction', 'Next action: Cache is aging — consider refreshing.');
+  } else {
+    elSet('sim-nextaction', 'Next action: Browse freely, no API calls will be made.');
   }
 }
 
@@ -1019,7 +1179,8 @@ async function doFetch(manual) {
   }
 
   var check = budgetCanFetch();
-  if (!check.ok) { showToast(check.reason, 'warn'); redetect(); return; }
+  if (!check.ok) { showToast(check.reason, 'danger'); redetect(); return; }
+  budgetTouch();
 
   setV('loading', 'Scanning...');
   var lbar = document.getElementById('lbar');
@@ -1151,7 +1312,34 @@ function redetect() {
 
 function manualRefresh() {
   var check = budgetCanFetch();
-  if (!check.ok) { showToast(check.reason, 'warn'); return; }
+  if (!check.ok) { showToast(check.reason, 'danger'); return; }
+  var soft = budgetSoftStatus();
+  var rem = budgetRemaining();
+  if (soft.sessionExceeded) {
+    var proceed = confirm('Recommended session budget exceeded ('+soft.sessionCount+'/'+soft.recommendedSession+').\n\nContinue with refresh?\n\nThis will consume 1 API request per sport (up to '+SPORTS.length+'). Remaining after: ~'+Math.max(0,rem.month-1)+'/'+ (C.monthlyBudget||500));
+    if (!proceed) return;
+  }
+  cacheClear();
+  doFetch(true);
+}
+
+// Force Refresh — explicit confirmation showing exact cost
+function forceRefresh() {
+  var check = budgetCanFetch();
+  if (!check.ok) { showToast(check.reason, 'danger'); return; }
+  var rem = budgetRemaining();
+  var lim = C.monthlyBudget || 500;
+  var msg = 'This action will consume up to '+SPORTS.length+' API request(s) (1 per uncached sport).\n\nRemaining after refresh: ~'+Math.max(0,rem.month-1)+'/'+lim+'\n\nProceed?';
+  if (!confirm(msg)) return;
+  cacheClear();
+  doFetch(true);
+}
+
+// Emergency Refresh — bypasses session soft limit, only blocked by monthly hard limit
+function emergencyRefresh() {
+  var check = budgetCanFetch();
+  if (!check.ok) { showToast(check.reason, 'danger'); return; }
+  showToast('Emergency Refresh - bypassing session recommendation', 'warn');
   cacheClear();
   doFetch(true);
 }
@@ -1354,7 +1542,7 @@ function renderScan() {
       var retVal=(lg.stake*lg.odd).toFixed(2);
       legsHtml+='<div class="leg'+(lg.fav?' fav-leg':'')+'"><div class="leg-out">'+lg.name+'</div>'
         +'<div class="leg-book">'+lg.book+' '+obHtml+favHtml+'</div>'
-        +'<div class="leg-odd">'+lg.odd.toFixed(2)+'</div>'
+        +'<div class="leg-odd">'+fmtOdd(lg.odd)+'</div>'
         +'<div class="leg-stake">Stake: $'+lg.stake+'</div>'
         +'<div class="leg-ret">Return: $'+retVal+'</div>'
         +(ageStr?'<div class="leg-age">'+ageStr+'</div>':'')+'</div>';
@@ -1431,6 +1619,56 @@ function renderCacheDiag() {
 }
 
 function dr2(k,v,cls){return '<div class="diag-row"><span class="diag-k">'+k+'</span><span class="diag-v'+(cls?' '+cls:'')+'">'+(v!==undefined?v:'--')+'</span></div>';}
+
+// BUDGET TAB — smart prediction, usage history, recommendations
+function renderBudgetTab() {
+  var el = document.getElementById('budget-content'); if (!el) return;
+  var b = budgetGet();
+  var soft = budgetSoftStatus();
+  var lim = C.monthlyBudget || 500;
+  var exh = budgetExhaustionDate();
+  var hist = budgetUsageHistory();
+  var dateStr = exh.date.toLocaleDateString('en-CA', {month:'long', day:'numeric'});
+
+  el.innerHTML =
+    '<div class="diag-card"><div class="diag-h">Smart Budget Prediction</div>'
+    +dr2('Monthly Remaining', soft.remaining+'/'+lim, soft.remaining<50?'r':soft.remaining<150?'gold':'g')
+    +dr2('Recommended/Day', soft.recommendedDaily, 'blue')
+    +dr2('Recommended/Session', soft.recommendedSession, 'blue')
+    +dr2('Quota lasts until', dateStr, 'g')
+    +dr2('Avg requests/day (actual)', exh.avgPerDay.toFixed(1))
+    +'</div>'
+    +'<div class="diag-card"><div class="diag-h">Today vs Recommended</div>'
+    +dr2('Used today', soft.todayCount, soft.dailyExceeded?'gold':'g')
+    +dr2('Recommended today', soft.recommendedDaily, 'blue')
+    +dr2('Status', soft.dailyExceeded?'Exceeded (soft warning only)':'Within budget', soft.dailyExceeded?'gold':'g')
+    +dr2('Used this session', soft.sessionCount, soft.sessionExceeded?'gold':'g')
+    +dr2('Recommended/session', soft.recommendedSession, 'blue')
+    +dr2('Session status', soft.sessionExceeded?'Exceeded (soft warning only)':'Within budget', soft.sessionExceeded?'gold':'g')
+    +'</div>'
+    +'<div class="diag-card"><div class="diag-h">API Usage History</div>'
+    +dr2('Today', hist.today)
+    +dr2('Yesterday', hist.yesterday)
+    +dr2('This week', hist.week)
+    +dr2('This month', hist.month, 'g')
+    +dr2('Average/day', hist.avgPerDay)
+    +dr2('Max in one session', hist.maxSession, 'gold')
+    +'</div>'
+    +'<div class="diag-card"><div class="diag-h">Budget Policy</div>'
+    +'<div style="font-size:12px;color:var(--muted2);line-height:1.8;">'
+    +'<strong style="color:var(--white);">Monthly quota = hard limit.</strong> Refreshes are disabled only when '+lim+' requests are used.<br><br>'
+    +'<strong style="color:var(--white);">Daily and session budgets = soft recommendations.</strong> Exceeding them shows a warning but never blocks you.<br><br>'
+    +(soft.remaining < 50 ?
+      '<strong style="color:var(--red);">Budget is low (&lt;50 remaining).</strong> Consider Simulation Mode or cache-first browsing to preserve your allowance.'
+      : '<strong style="color:var(--green);">Budget is healthy.</strong> Refresh freely.')
+    +'</div></div>';
+
+  // Toggle the low-budget banner
+  try {
+    var banner = document.getElementById('low-budget-rec');
+    if (banner) banner.style.display = soft.remaining < 50 ? 'flex' : 'none';
+  } catch(e) {}
+}
 
 // BOOKMAKERS - toggle favs/active = redetect only, zero API
 var _bmSorted = []; // global for onclick access
@@ -1603,14 +1841,21 @@ function dr(k,v,cls){return '<div class="drow"><span class="dk">'+k+'</span><spa
 // CSV EXPORT
 function expCSV(){
   if(!S.hist.length){alert('No history to export.');return;}
-  var rows=[['Match','Sport','Type','ROI (%)','Profit ($)','Return ($)','Bookmaker A','Odds A','Stake A','Bookmaker B','Odds B','Stake B','Quality Score','Timestamp']];
+  var rows=[['Game','Home Team','Away Team','Competition','Sport','Event Time (Local)','Type','ROI (%)','Profit ($)','Return ($)',
+    'Bookmaker A','Odds A (Decimal)','Odds A (American)','Stake A','Bookmaker B','Odds B (Decimal)','Odds B (American)','Stake B',
+    'Bookmaker C','Odds C (Decimal)','Odds C (American)','Stake C','Quality Score','Detected At']];
   for(var i=0;i<S.hist.length;i++){
     var sb=S.hist[i];var l=sb.legs||[];
-    rows.push(['"'+(sb.matchName||'')+'"',spLabel(sb.sp||''),(sb.waysLabel||sb.ways||''),
-      sb.roi||0,sb.profit||0,sb.ret||0,
-      '"'+(l[0]?l[0].book:'')+'"',l[0]?l[0].odd:'',l[0]?l[0].stake:'',
-      '"'+(l[1]?l[1].book:'')+'"',l[1]?l[1].odd:'',l[1]?l[1].stake:'',
-      sb.qs||0,sb.det?new Date(sb.det).toLocaleString('en-CA'):'']);
+    var homeAway=(sb.matchName||'').split(' vs ');
+    var home=homeAway[0]||''; var away=homeAway[1]||'';
+    var eventTime=sb.t?new Date(sb.t).toLocaleString('en-CA',{dateStyle:'medium',timeStyle:'short'}):'';
+    var row=['"'+(sb.matchName||'')+'"','"'+home+'"','"'+away+'"','"'+(sb.comp||'')+'"',spLabel(sb.sp||''),'"'+eventTime+'"',
+      (sb.waysLabel||sb.ways||''),sb.roi||0,sb.profit||0,sb.ret||0,
+      '"'+(l[0]?l[0].book:'')+'"',l[0]?l[0].odd.toFixed(2):'',l[0]?decToAmerican(l[0].odd):'',l[0]?l[0].stake:'',
+      '"'+(l[1]?l[1].book:'')+'"',l[1]?l[1].odd.toFixed(2):'',l[1]?decToAmerican(l[1].odd):'',l[1]?l[1].stake:'',
+      '"'+(l[2]?l[2].book:'')+'"',l[2]?l[2].odd.toFixed(2):'',l[2]?decToAmerican(l[2].odd):'',l[2]?l[2].stake:'',
+      sb.qs||0,sb.det?new Date(sb.det).toLocaleString('en-CA'):''];
+    rows.push(row);
   }
   var csv=rows.map(function(r){return r.join(',');}).join('\n');
   var a=document.createElement('a');
@@ -1627,14 +1872,29 @@ function updStats(){
   elSet('s5',avg?avg+'%':'--');elSet('s3',S.books||'--');elSet('s4',S.games||'--');
 }
 function updBudgetBar(){
-  var b=budgetGet();var lim=C.monthlyBudget||500;
-  var mPct=Math.min(100,b.month/lim*100);var sPct=Math.min(100,(b.session||0)/100*100);
-  var mCls=mPct>90?'danger':mPct>70?'warn':'';
-  elSet('bm-used',b.month);elSet('bm-lim','/'+lim);elSet('bs-used',b.session||0);
+  var b=budgetGet();var lim=C.monthlyBudget||500;var soft=budgetSoftStatus();
+  var mPct=Math.min(100,b.month/lim*100);
+  var mCls=mPct>=100?'danger':mPct>80?'warn':'';
+  var sCls=soft.sessionExceeded?'warn':'';
+  var dCls=soft.dailyExceeded?'warn':'';
+  elSet('bm-used',b.month);elSet('bm-lim','/'+lim);
+  elSet('bs-used',soft.sessionCount);elSet('bs-rec','/'+soft.recommendedSession+' rec');
+  elSet('bd-used',soft.todayCount);elSet('bd-rec','/'+soft.recommendedDaily+' rec');
   var bmBar=document.getElementById('bm-bar');if(bmBar){bmBar.style.width=mPct+'%';bmBar.className='bfill'+(mCls?' '+mCls:'');}
-  var bsBar=document.getElementById('bs-bar');if(bsBar)bsBar.style.width=sPct+'%';
+  var bsBar=document.getElementById('bs-bar');if(bsBar){var sPct=Math.min(100,soft.sessionCount/Math.max(1,soft.recommendedSession)*100);bsBar.style.width=sPct+'%';bsBar.className='bfill'+(sCls?' '+sCls:'');}
+  var bdBar=document.getElementById('bd-bar');if(bdBar){var dPct=Math.min(100,soft.todayCount/Math.max(1,soft.recommendedDaily)*100);bdBar.style.width=dPct+'%';bdBar.className='bfill'+(dCls?' '+dCls:'');}
   var biMonth=document.getElementById('bi-month');if(biMonth)biMonth.className='bi'+(mCls?' '+mCls:'');
+  var biSession=document.getElementById('bi-session');if(biSession)biSession.className='bi'+(sCls?' '+sCls:'');
+  var biDay=document.getElementById('bi-day');if(biDay)biDay.className='bi'+(dCls?' '+dCls:'');
   elSet('cache-pill','Cache: '+cacheEfficiency()+'% hits');
+  // Smart recommendation when budget is low
+  if (soft.remaining < 50) {
+    var recEl = document.getElementById('low-budget-rec');
+    if (recEl) {
+      recEl.style.display = 'flex';
+      recEl.querySelector ? null : null;
+    }
+  }
 }
 function goTab(id){
   var panels=document.querySelectorAll('.panel');for(var i=0;i<panels.length;i++)panels[i].className='panel';
@@ -1647,6 +1907,7 @@ function goTab(id){
   if(id==='dash')setTimeout(updateCharts,80);
   if(id==='debug')updDebug(0);
   if(id==='cache')setTimeout(renderCacheDiag,50);
+  if(id==='budget')setTimeout(renderBudgetTab,50);
 }
 function showToast(msg,type){
   var c=document.getElementById('toasts');if(!c)return;
@@ -1685,6 +1946,7 @@ function startCD(){
 
 // AUTO-LOAD
 window.addEventListener('load',function(){
+  try{ var sf=localStorage.getItem('sb_oddsfmt'); if(sf==='american'||sf==='decimal') S.oddsFormat=sf; }catch(e){}
   try{
     var sv=localStorage.getItem('sbpv4');
     if(sv){
