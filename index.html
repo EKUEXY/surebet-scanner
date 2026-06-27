@@ -334,16 +334,17 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   </div>
 </div>
 
-<!-- SIMULATION MODE BANNER -->
-<div class="sim-bar" id="sim-bar">
-  <span class="sim-label">&#128190; SIMULATION MODE</span>
+<!-- HOME STATUS BANNER (cache-first, API-second) -->
+<div class="sim-bar show" id="sim-bar">
+  <span class="sim-label" id="home-status-icon">&#128190; SIMULATION MODE</span>
   <span class="sim-meta">Status: <strong style="color:var(--green);" id="sim-status">Using cached data only</strong></span>
-  <span class="sim-meta">Cache age: <span id="sim-age">No cached data loaded</span></span>
-  <span class="sim-meta">Last API fetch: <span id="sim-ts">Never</span></span>
-  <span class="sim-meta" id="sim-nextaction" style="color:var(--gold);">Next action: Press "Refresh Now" to load odds.</span>
+  <span class="sim-meta">Cached Odds Age: <span id="sim-age">No cached data loaded</span></span>
+  <span class="sim-meta">Last API: <span id="sim-ts">Never</span></span>
+  <span class="sim-meta" id="sim-cost" style="color:var(--blue);">Estimated API cost: Next refresh = up to 21 requests</span>
+  <span class="sim-meta" id="sim-nextaction" style="color:var(--gold);">Next action: Press "Fetch Fresh Data" to load odds.</span>
   <div style="margin-left:auto;display:flex;gap:8px;">
-    <button class="sim-btn go" onclick="exitSim()">&#8635; Refresh Now</button>
-    <button class="sim-btn stay" onclick="keepSim()">Continue with Cache</button>
+    <button class="sim-btn go" id="sim-fetch-btn" onclick="doFetchFresh()">&#8635; Fetch Fresh Data</button>
+    <button class="sim-btn stay" onclick="keepSim()">Stay in Simulation</button>
   </div>
 </div>
 
@@ -547,7 +548,13 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
     </div>
     <div class="scard">
       <div class="scard-h">Refresh and Cache</div>
-      <div class="srow"><div class="fl"><label>Refresh Interval</label>
+      <div class="srow"><div class="fl"><label>Automatic API Refresh</label>
+        <select class="fi" id="ss-autorefresh">
+          <option value="0" selected>OFF (recommended - cache-first)</option>
+          <option value="1">ON (smart refresh strategy)</option>
+        </select>
+      </div></div>
+      <div class="srow"><div class="fl"><label>Refresh Interval (only used if Auto Refresh is ON)</label>
         <select class="fi" id="ss-rf">
           <option value="30">30 seconds</option>
           <option value="60">1 minute</option>
@@ -591,7 +598,7 @@ var C = {
   apiKey:'', minRoi:1, hotRoi:3, eliteRoi:8,
   bankroll:1000, maxPct:100, maxPerBook:0,
   sound:true, refreshSec:90, cacheSec:120,
-  monthlyBudget:500
+  monthlyBudget:500, autoRefresh:false
 };
 
 // ── STATE ─────────────────────────────────────────────────
@@ -1063,15 +1070,24 @@ function launchApp() {
     document.getElementById('ss-snd').value = C.sound ? '1' : '0';
     document.getElementById('ss-key').value = C.apiKey;
     document.getElementById('ss-budget').value = C.monthlyBudget || 500;
+    var arSel = document.getElementById('ss-autorefresh'); if (arSel) arSel.value = C.autoRefresh ? '1' : '0';
     document.getElementById('ck-bk').value = C.bankroll;
   } catch(e) {}
 
   updSndBtn(); renderHist(); renderBooks(); updBudgetBar();
   var ofb=document.getElementById('oddsfmtbtn'); if(ofb) ofb.textContent = S.oddsFormat==='decimal'?'Decimal':'American';
 
+  // SIMULATION-FIRST STARTUP — never call the API automatically
   var loaded = cacheLoadFromStorage();
-  if (loaded > 0) { showStartupBanner(loaded); }
-  else { doFetch(false); startCD(); }
+  enterSim(); // always begin in Simulation Mode, regardless of cache state
+  if (loaded > 0) {
+    redetect(); // populate UI instantly from cache, zero API calls
+  } else {
+    renderScan(); // shows the "no cached data" empty state
+  }
+  updHomeBanner();
+  // Auto Refresh is OFF by default — only starts the timer if user enabled it
+  if (C.autoRefresh) { startCD(); }
 }
 
 function doLogout() {
@@ -1080,28 +1096,10 @@ function doLogout() {
   location.reload();
 }
 
-// ── STARTUP BANNER ────────────────────────────────────────
-function showStartupBanner(loaded) {
-  var ts = cacheNewestTs();
-  var ageSec = ts ? Math.round((Date.now()-ts)/1000) : null;
-  var info = loaded+' sports cached - Age: '+(ageSec !== null ? fmtAge(ageSec) : 'unknown');
-  elSet('startup-info', info);
-  var bar = document.getElementById('startup-bar');
-  if (bar) bar.className = 'startup-bar show';
-}
-
-function useCache() {
-  var bar = document.getElementById('startup-bar');
-  if (bar) bar.className = 'startup-bar';
-  enterSim();
-  redetect();
-}
-
-function fetchFresh() {
-  var bar = document.getElementById('startup-bar');
-  if (bar) bar.className = 'startup-bar';
-  doFetch(true); startCD();
-}
+// ── STARTUP BANNER (legacy, kept as no-op for compatibility) ──
+function showStartupBanner(loaded) { /* superseded by home banner + sim-first startup */ }
+function useCache() { /* superseded — app starts in sim mode automatically */ }
+function fetchFresh() { doFetchFresh(); }
 
 // ═══════════════════════════════════════════════════════════
 // SIMULATION MODE
@@ -1111,58 +1109,96 @@ function fetchFresh() {
 // ═══════════════════════════════════════════════════════════
 function enterSim() {
   S.simMode = true;
-  clearInterval(S.cdInt); // stop auto-refresh
+  clearInterval(S.cdInt); // stop auto-refresh while in Simulation Mode
   var bar = document.getElementById('sim-bar');
   if (bar) bar.className = 'sim-bar show';
   var btn = document.getElementById('simbtn');
   if (btn) btn.className = 'ticon active';
   setV('sim', 'Simulation');
-  updSimBar();
-  S._simInt = setInterval(updSimBar, 10000);
+  updHomeBanner();
+  clearInterval(S._simInt);
+  S._simInt = setInterval(updHomeBanner, 10000);
 }
 
-function exitSim() {
-  S.simMode = false;
-  clearInterval(S._simInt);
-  var bar = document.getElementById('sim-bar');
-  if (bar) bar.className = 'sim-bar';
-  var btn = document.getElementById('simbtn');
-  if (btn) btn.className = 'ticon';
-  cacheClear();
-  startCD();
-  doFetch(true); // explicit user-triggered fetch
+function exitSim() { doFetchFresh(); }
+
+// Explicit "Fetch Fresh Data" action — the ONLY way (besides Force/Emergency Refresh)
+// that an API call is triggered. Always returns to Simulation Mode afterward.
+async function doFetchFresh() {
+  var btn = document.getElementById('sim-fetch-btn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '&#8635; Fetching... <span style="font-size:10px;opacity:.8;">Cost: up to '+SPORTS.length+' req</span>'; }
+  await doFetch(true); // bypasses sim guard because manual=true
+  if (btn) { btn.disabled = false; }
+  // Always return to / remain in Simulation Mode after a fresh fetch
+  if (!S.simMode) { enterSim(); } else { updSimBar(); }
+  redetect();
+  updHomeBanner();
 }
 
 function keepSim() {
-  var bar = document.getElementById('startup-bar');
-  if (bar) bar.className = 'startup-bar';
   updSimBar();
 }
 
-function togSim() { if (S.simMode) exitSim(); else enterSim(); }
+// Manual toggle (settings icon) — leaves sim mode WITHOUT auto-fetching.
+// User must still press Fetch Fresh Data / Force Refresh to get new odds.
+function togSim() {
+  if (S.simMode) {
+    S.simMode = false;
+    clearInterval(S._simInt);
+    var bar = document.getElementById('sim-bar');
+    if (bar) bar.className = 'sim-bar';
+    var btn = document.getElementById('simbtn');
+    if (btn) btn.className = 'ticon';
+    if (C.autoRefresh) startCD();
+  } else {
+    enterSim();
+  }
+}
 
-function updSimBar() {
+function updSimBar() { updHomeBanner(); }
+
+// Home status banner — implements:
+// 🟢 Ready / Cached Odds Age / Last API / Estimated API cost
+function updHomeBanner() {
   var ts = cacheNewestTs();
+  var iconEl = document.getElementById('home-status-icon');
+  var costEl = document.getElementById('sim-cost');
+  var fetchBtn = document.getElementById('sim-fetch-btn');
+  var uncachedCount = 0;
+  for (var i=0; i<SPORTS.length; i++) { if (!cacheIsValid(SPORTS[i])) uncachedCount++; }
+
   if (!ts) {
     elSet('sim-age', 'No cached data loaded');
     elSet('sim-ts', 'Never');
-    elSet('sim-status', 'No data available');
-    elSet('sim-nextaction', 'Next action: Press "Refresh Now" to load odds.');
-    return;
-  }
-  elSet('sim-age', fmtAge(Math.round((Date.now()-ts)/1000)));
-  elSet('sim-status', 'Using cached data only');
-  if (S.lastRealFetch) {
-    var d = new Date(S.lastRealFetch);
-    elSet('sim-ts', d.toLocaleTimeString('en-CA', {hour:'2-digit', minute:'2-digit'}));
+    elSet('sim-status', 'No cached data available');
+    elSet('sim-nextaction', 'Next action: Press "Fetch Fresh Data" to load odds.');
+    if (iconEl) iconEl.innerHTML = '&#9899; No Data';
+    if (costEl) costEl.textContent = 'Estimated API cost: First fetch = up to '+SPORTS.length+' requests';
   } else {
-    elSet('sim-ts', 'Never');
+    var ageSec = Math.round((Date.now()-ts)/1000);
+    elSet('sim-age', fmtAge(ageSec));
+    elSet('sim-status', 'Using cached data only');
+    if (S.lastRealFetch) {
+      var d = new Date(S.lastRealFetch);
+      elSet('sim-ts', d.toLocaleTimeString('en-CA', {hour:'2-digit', minute:'2-digit'}));
+    } else { elSet('sim-ts', 'Never'); }
+
+    if (ageSec > 900) {
+      elSet('sim-nextaction', 'Next action: Cache is aging - refresh recommended.');
+      if (iconEl) iconEl.innerHTML = '&#128993; Aging';
+    } else {
+      elSet('sim-nextaction', 'Next action: Browse freely, no API calls will be made.');
+      if (iconEl) iconEl.innerHTML = '&#128994; Ready';
+    }
+    if (costEl) {
+      costEl.textContent = uncachedCount > 0
+        ? 'Estimated API cost: Next refresh = up to '+uncachedCount+' request'+(uncachedCount===1?'':'s')
+        : 'Estimated API cost: Next refresh = 0 requests (all cached)';
+    }
   }
-  var ageSec = Math.round((Date.now()-ts)/1000);
-  if (ageSec > 900) {
-    elSet('sim-nextaction', 'Next action: Cache is aging — consider refreshing.');
-  } else {
-    elSet('sim-nextaction', 'Next action: Browse freely, no API calls will be made.');
+
+  if (fetchBtn && !fetchBtn.disabled) {
+    fetchBtn.innerHTML = '&#8635; Fetch Fresh Data <span style="font-size:10px;opacity:.85;">Cost: '+uncachedCount+' req</span>';
   }
 }
 
@@ -1250,7 +1286,7 @@ async function doFetch(manual) {
   elSet('last-update-display', ts);
   elSet('last-ts', 'Updated: '+ts);
 
-  updStats(); updScopeInfo(); updBudgetBar();
+  updStats(); updScopeInfo(); updBudgetBar(); updHomeBanner();
   updDebug(apiCallsMade);
   if (manual) showToast('Refreshed - '+apiCallsMade+' API calls - '+S.scanDurSec+'s', 'ok');
 
@@ -1307,7 +1343,7 @@ function redetect() {
   if (S.hist.length > 500) S.hist = S.hist.slice(0, 500);
   try { localStorage.setItem('sbhv4', JSON.stringify(S.hist)); } catch(e) {}
 
-  updStats(); renderScan(); renderHist(); renderBooks(); updScopeInfo();
+  updStats(); renderScan(); renderHist(); renderBooks(); updScopeInfo(); updHomeBanner();
 }
 
 function manualRefresh() {
@@ -1808,11 +1844,15 @@ function saveSet(){
   C.cacheSec=parseInt(document.getElementById('ss-cache').value)||120;
   C.sound=document.getElementById('ss-snd').value==='1';
   C.monthlyBudget=parseInt(document.getElementById('ss-budget').value)||500;
+  var arEl=document.getElementById('ss-autorefresh');
+  C.autoRefresh = arEl ? (arEl.value==='1') : false;
   var nk=(document.getElementById('ss-key').value||'').trim();if(nk.length>20)C.apiKey=nk;
   var el=document.getElementById('ck-bk');if(el)el.value=C.bankroll;
-  clearInterval(S.cdInt);S.cdSec=C.refreshSec;startCD();
+  clearInterval(S.cdInt);S.cdSec=C.refreshSec;
+  if (C.autoRefresh) { startCD(); } else { elSet('cdtxt','--:--'); }
   saveC();updSndBtn();redetect();
-  showToast('Settings saved - Refresh '+C.refreshSec+'s - Cache TTL '+C.cacheSec+'s','ok');
+  var arMsg = C.autoRefresh ? ('Auto Refresh ON - every '+C.refreshSec+'s') : 'Auto Refresh OFF - manual fetch only';
+  showToast('Settings saved - '+arMsg,'ok');
 }
 
 // DEBUG
@@ -1938,7 +1978,10 @@ function startCD(){
   clearInterval(S.cdInt);S.cdSec=C.refreshSec;
   S.cdInt=setInterval(function(){
     S.cdSec--;
-    if(S.cdSec<=0){S.cdSec=C.refreshSec;if(!S.simMode)doFetch(false);}
+    if(S.cdSec<=0){
+      S.cdSec=C.refreshSec;
+      if(!S.simMode && C.autoRefresh) doFetch(false);
+    }
     var m=Math.floor(S.cdSec/60);var s=S.cdSec%60;
     elSet('cdtxt',(m<10?'0':'')+m+':'+(s<10?'0':'')+s);
   },1000);
