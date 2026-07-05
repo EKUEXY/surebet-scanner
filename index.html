@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SureBet Pro v4 · Ontario</title>
+<title>ARBIT · Ontario</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap');
 :root{
@@ -286,10 +286,10 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 <div class="sbox">
   <div class="sbrand">
     <div class="sicon">&#9889;</div>
-    <div><div class="sname">SureBet Pro v4</div><div class="stag">Smart Cache - Budget Manager</div></div>
+    <div><div class="sname">ARBIT</div><div class="stag">Arbitrage Intelligence Platform</div></div>
   </div>
-  <div class="sh">Configure Scanner</div>
-  <div class="ssub">Smart cache - 500 req/month budget - Precise arbitrage - 33 Ontario bookmakers</div>
+  <div class="sh">Welcome to ARBIT</div>
+  <div class="ssub">Cache-first arbitrage intelligence - 33 Ontario bookmakers - 500 req/month budget</div>
   <div class="err-box" id="err-box"></div>
   <div class="fl">
     <label>API Key - The Odds API</label>
@@ -311,8 +311,8 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
       <option value="900">15 minutes</option>
     </select>
   </div>
-  <button class="cta" id="cbtn" onclick="doConnect()">&#9889; Connect and Launch</button>
-  <div class="snote">&#128274; Key stored locally - Smart cache - 500 req/month max</div>
+  <button class="cta" id="cbtn" onclick="doConnect()">&#9889; Launch ARBIT</button>
+  <div class="snote">&#128274; Key stored locally · Cache-first · Zero API calls until you choose</div>
 </div>
 </div>
 
@@ -322,7 +322,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 
 <div class="topbar">
   <div class="tl">
-    <div class="tlogo">&#9889; SureBet <span>Pro v4</span></div>
+    <div class="tlogo">&#9889; ARBIT</div>
     <div class="vpill"><div class="vdot" id="vdot"></div><span id="vstxt">Init</span></div>
   </div>
   <div class="tr">
@@ -401,6 +401,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div class="tab" onclick="goTab('hist')">History <span class="tbadge" id="b2">0</span></div>
   <div class="tab" onclick="goTab('debug')">Debug</div>
   <div class="tab" onclick="goTab('settings')">Settings</div>
+  <div class="tab" onclick="goTab('help')">Help &#10067;</div>
 </div>
 
 <div class="main">
@@ -584,14 +585,20 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   </div>
 </div>
 
+<!-- HELP TAB -->
+<div class="panel" id="panel-help">
+  <div class="slabel">ARBIT — Help Center</div>
+  <div id="help-content"></div>
+</div>
+
 </div><!-- .main -->
-<footer>SureBet Pro v4 - Smart Cache - 500 req/month budget - 33 iGaming Ontario Bookmakers - ConnexOntario 1-866-531-2600</footer>
+<footer>ARBIT - Smart Cache - 500 req/month budget - 33 iGaming Ontario Bookmakers - ConnexOntario 1-866-531-2600</footer>
 </div><!-- #app -->
 
 <div class="toasts" id="toasts"></div>
 
 <script>
-// SureBet Pro v4 - iOS-safe JS
+// ARBIT - iOS-safe JS
 // No template literals, no spread, no optional chaining
 
 var C = {
@@ -1656,7 +1663,100 @@ function renderCacheDiag() {
 
 function dr2(k,v,cls){return '<div class="diag-row"><span class="diag-k">'+k+'</span><span class="diag-v'+(cls?' '+cls:'')+'">'+(v!==undefined?v:'--')+'</span></div>';}
 
-// BUDGET TAB — smart prediction, usage history, recommendations
+// HELP / FAQ TAB
+function renderHelp() {
+  var el = document.getElementById('help-content'); if (!el) return;
+  var sections = [
+    {
+      title: 'What is ARBIT?',
+      body: 'ARBIT is an arbitrage intelligence platform for Ontario sports bettors. It scans odds from up to 33 licensed Ontario bookmakers and identifies "surebets" — situations where you can bet on every possible outcome of a game and guarantee a profit regardless of the result. This works because different bookmakers price the same event differently. ARBIT finds those gaps automatically.'
+    },
+    {
+      title: 'What is a Surebet (Arbitrage)?',
+      body: 'A surebet exists when the combined implied probability of all outcomes in a game is less than 100%. Example: Bookmaker A offers Team A to win at 2.10 (odds), and Bookmaker B offers Team B to win at 2.20. By splitting your bankroll correctly across both bets, you collect more than you staked — no matter who wins. ARBIT calculates the exact amounts for you.'
+    },
+    {
+      title: 'What is ROI?',
+      body: 'ROI (Return on Investment) is how much profit you make as a percentage of your total stake. A 2% ROI means for every $1,000 you stake across the legs of the surebet, you guarantee $20 profit. ARBIT filters by minimum ROI — set it higher to see only the most profitable opportunities.'
+    },
+    {
+      title: 'How to get your Odds API key',
+      body: '1. Go to https://the-odds-api.com\n2. Click "Get API Key" and create a free account\n3. Verify your email address\n4. Copy your API key from the dashboard\n5. Open ARBIT → Settings → paste the key → Save\n6. Press "Fetch Fresh Data" in the Simulation Mode banner\n\nThe free plan gives 500 requests per month. ARBIT is designed to use as few requests as possible through its smart cache system.'
+    },
+    {
+      title: 'Simulation Mode',
+      body: 'Simulation Mode is ARBIT\'s default state. When active:\n• No API requests are made\n• The app uses data already stored in its local cache\n• All filters, sorts, and scope changes work instantly with zero API cost\n\nThe home banner shows the cache age and the cost of the next refresh. Press "Fetch Fresh Data" when you want fresh odds from the API. After every fetch, ARBIT automatically returns to Simulation Mode to protect your API budget.'
+    },
+    {
+      title: 'Cache System',
+      body: 'The cache stores the last odds you fetched, locally on your device. When you switch between Global/Ontario/Favorites, change your sport filter, or sort results, ARBIT reads from the cache — zero API calls. The cache expires based on the TTL (Time-To-Live) you set in Settings (default 120 seconds). After expiry, ARBIT flags data as stale but never auto-fetches — you stay in control.'
+    },
+    {
+      title: 'API Budget',
+      body: 'The free Odds API plan gives 500 requests/month. ARBIT enforces this as a hard limit — you can never go over. Daily and session budgets are soft recommendations only and never block you.\n\nBudget tab shows:\n• Remaining monthly requests\n• Recommended daily usage\n• Estimated quota exhaustion date\n• Full usage history\n\nForce Refresh and Emergency Refresh are always available as long as your monthly quota is not exhausted.'
+    },
+    {
+      title: 'Global / Ontario / Favorites modes',
+      body: 'These three scopes control which bookmakers ARBIT uses in its calculations:\n\n• Global — all bookmakers worldwide that The Odds API returns\n• Ontario — only the 33 licensed iGaming Ontario operators\n• Favorites — only bookmakers you have starred in the Bookmakers tab\n\nImportant: the scope filter is applied BEFORE the arbitrage calculation, not after. This means ARBIT only looks for surebets that are actually available in your selected mode — no phantom opportunities.'
+    },
+    {
+      title: '2-WAY vs 3-WAY surebets',
+      body: '2-WAY: Two possible outcomes (e.g. Tennis, NFL Money Line). ARBIT splits your bankroll across 2 bets.\n3-WAY: Three possible outcomes (e.g. Soccer with Draw). ARBIT splits across 3 bets.\n\nARBIT detects the number of outcomes directly from the API — it never invents a third outcome. If the API returns only 2 outcomes, ARBIT treats it as 2-WAY.'
+    },
+    {
+      title: 'Stake Allocation',
+      body: 'ARBIT calculates the exact stake for each leg using the Kelly-adjacent arbitrage formula:\n\nStake = Bankroll / (Sum of inverse odds × individual odds)\n\nThis guarantees the same return regardless of which team wins. You can set a maximum stake per bookmaker in Settings to stay within account limits.'
+    },
+    {
+      title: 'Quality Score (QS)',
+      body: 'Each surebet gets a Quality Score from 0 to 100 based on:\n• Freshness of the odds (40 points) — fresher = better\n• ROI percentage (30 points) — higher = better\n• Bookmaker diversity (15 points) — more different bookmakers = safer\n• Data completeness (15 points) — all odds ages known = better\n\nA score above 80 is excellent. Below 50 means the data may be stale or the opportunity is marginal.'
+    },
+    {
+      title: 'Bet Safety Indicators',
+      body: 'Every surebet card shows a safety status:\n\n✅ Ready to Review — odds are fresh (under 60 seconds)\n⚠ Refresh Recommended — odds are 1-5 minutes old\n🟠 Data Aging — 5-15 minutes old, refresh before betting\n❌ Refresh Required — over 15 minutes old, or event starts in under 10 minutes\n\nAlways refresh before placing real money bets, especially for events starting within 30 minutes.'
+    },
+    {
+      title: 'Dashboard and Charts',
+      body: 'The Dashboard tab shows:\n• Events scanned, bookmakers covered, scan duration\n• Best and average ROI this session\n• API requests remaining\n• ROI over time chart\n• Surebet volume chart\n• API calls per scan chart\n• Top bookmakers involved in surebets\n\nCharts load from session memory — zero API calls.'
+    },
+    {
+      title: 'Calculator',
+      body: 'The Calculator tab lets you manually enter odds and calculates optimal stakes and guaranteed ROI. Supports 2 or 3 outcomes. Enter decimal odds (e.g. 2.10) and your bankroll. If the inverse sum is below 1.0, it is a surebet and ARBIT shows the exact stakes.'
+    },
+    {
+      title: 'American vs Decimal Odds',
+      body: 'ARBIT displays odds in two formats:\n\n• Decimal (default) — used in most of the world. 2.10 means you receive $2.10 for every $1 staked (including your original stake).\n• American — used in North America. +110 means bet $100 to win $110 profit. -200 means bet $200 to win $100 profit.\n\nToggle between formats using the "Decimal / American" button in the Surebets toolbar. Your preference is saved automatically.'
+    },
+    {
+      title: 'Bookmakers Tab',
+      body: 'Shows all 33 iGaming Ontario licensed bookmakers. You can:\n• Star (⭐) a bookmaker to add it to your Favorites scope\n• Toggle ON/OFF to include or exclude it from all scans\n• Favorites appear first in all surebet results\n\nChanges take effect instantly — no refresh needed.'
+    },
+    {
+      title: 'CSV Export',
+      body: 'The History tab lets you export all detected surebets as a CSV file. Each row includes:\n• Game name, home team, away team\n• Competition and sport\n• Event kickoff time (local timezone)\n• Type (2-WAY or 3-WAY)\n• ROI, profit, guaranteed return\n• Both decimal and American odds for each bookmaker\n• Exact stakes\n• Quality Score\n• Detection timestamp'
+    },
+    {
+      title: 'Common Errors',
+      body: '"Invalid API key" — Double-check your key at the-odds-api.com. Make sure there are no extra spaces.\n\n"Monthly quota exhausted" — You have used all 500 requests this month. ARBIT switches to cache-only mode automatically.\n\n"No surebets found" — This is normal. True surebets are rare (under 1% of all markets). Try lowering your minimum ROI to 0.5% or switching to Global mode.\n\n"Stale data warning" — Your cache is older than the TTL. Press Fetch Fresh Data to update.'
+    },
+    {
+      title: 'FAQs',
+      body: 'Q: Is arbitrage betting legal in Ontario?\nA: Yes. Arbitrage betting is legal. However, some bookmakers may limit or close accounts they suspect of arbing. Use multiple accounts and stay under the radar.\n\nQ: Why does ARBIT start in Simulation Mode?\nA: To protect your 500 monthly API requests. You control when data is fetched.\n\nQ: How often should I refresh?\nA: Odds change frequently. For live value, refresh every 2-5 minutes before placing bets.\n\nQ: Can I use ARBIT on my phone?\nA: Yes. ARBIT is fully mobile-responsive and works on iOS Safari and Android Chrome.\n\nQ: Does ARBIT place bets for me?\nA: No. ARBIT is a scanner and calculator only. You place bets manually on each bookmaker\'s platform.'
+    }
+  ];
+
+  var html = '<div style="max-width:720px;">';
+  for (var i=0; i<sections.length; i++) {
+    var s = sections[i];
+    var bodyHtml = s.body.replace(/\n/g, '<br>');
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px;">'
+      + '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:17px;font-weight:700;color:var(--green);margin-bottom:8px;">'+(i+1)+'. '+s.title+'</div>'
+      + '<div style="font-size:13px;color:var(--muted2);line-height:1.8;">'+bodyHtml+'</div>'
+      + '</div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
 function renderBudgetTab() {
   var el = document.getElementById('budget-content'); if (!el) return;
   var b = budgetGet();
@@ -1847,12 +1947,33 @@ function saveSet(){
   var arEl=document.getElementById('ss-autorefresh');
   C.autoRefresh = arEl ? (arEl.value==='1') : false;
   var nk=(document.getElementById('ss-key').value||'').trim();if(nk.length>20)C.apiKey=nk;
-  var el=document.getElementById('ck-bk');if(el)el.value=C.bankroll;
+
+  // Sync all reactive inputs that display bankroll
+  var el;
+  el=document.getElementById('ck-bk');if(el)el.value=C.bankroll;
+  el=document.getElementById('sb2');if(el)el.value=C.bankroll;
+
   clearInterval(S.cdInt);S.cdSec=C.refreshSec;
   if (C.autoRefresh) { startCD(); } else { elSet('cdtxt','--:--'); }
-  saveC();updSndBtn();redetect();
+
+  saveC(); updSndBtn();
+
+  // REACTIVE UPDATE — force full recalculation of all stakes/ROI/recommendations
+  // detect() uses C.bankroll/C.maxPct/C.maxPerBook/C.minRoi at call time,
+  // so redetect() here picks up all new values immediately
+  redetect();
+
+  // Also refresh dashboard if open
+  try { updateCharts(); } catch(e) {}
+  // Refresh budget tab if open
+  try { renderBudgetTab(); } catch(e) {}
+  // Refresh home banner with new cache cost estimate
+  try { updHomeBanner(); } catch(e) {}
+  // Refresh debug panel
+  try { updDebug(0); } catch(e) {}
+
   var arMsg = C.autoRefresh ? ('Auto Refresh ON - every '+C.refreshSec+'s') : 'Auto Refresh OFF - manual fetch only';
-  showToast('Settings saved - '+arMsg,'ok');
+  showToast('Settings saved - Bankroll $'+C.bankroll+' - Min ROI '+C.minRoi+'% - '+arMsg,'ok');
 }
 
 // DEBUG
@@ -1948,6 +2069,7 @@ function goTab(id){
   if(id==='debug')updDebug(0);
   if(id==='cache')setTimeout(renderCacheDiag,50);
   if(id==='budget')setTimeout(renderBudgetTab,50);
+  if(id==='help')setTimeout(renderHelp,50);
 }
 function showToast(msg,type){
   var c=document.getElementById('toasts');if(!c)return;
