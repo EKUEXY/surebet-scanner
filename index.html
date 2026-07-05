@@ -1056,7 +1056,19 @@ function launchApp() {
   if (app) { app.style.display = 'flex'; app.style.flexDirection = 'column'; }
 
   try { var h=localStorage.getItem('sbhv4'); if(h) S.hist=JSON.parse(h); } catch(e) {}
-  try { var f=localStorage.getItem('sbfav'); if(f) FAV=JSON.parse(f); } catch(e) {}
+  try {
+    var f = localStorage.getItem('sbfav');
+    if (f) {
+      var parsed = JSON.parse(f);
+      // Handle legacy array format from old Set-based code
+      if (Array.isArray(parsed)) {
+        FAV = {};
+        for (var fi=0; fi<parsed.length; fi++) FAV[parsed[fi]] = true;
+      } else {
+        FAV = parsed || {};
+      }
+    }
+  } catch(e) { FAV = {}; }
   try {
     var ab = localStorage.getItem('sbactive');
     if (ab) { ACTIVE_BM = JSON.parse(ab); }
@@ -1081,7 +1093,7 @@ function launchApp() {
     document.getElementById('ck-bk').value = C.bankroll;
   } catch(e) {}
 
-  updSndBtn(); renderHist(); renderBooks(); updBudgetBar();
+  updSndBtn(); renderHist(); renderBooks(); updBudgetBar(); updBmBadge();
   var ofb=document.getElementById('oddsfmtbtn'); if(ofb) ofb.textContent = S.oddsFormat==='decimal'?'Decimal':'American';
 
   // SIMULATION-FIRST STARTUP — never call the API automatically
@@ -1540,7 +1552,12 @@ function setScope(el) {
   redetect(); updScopeInfo();
 }
 function updScopeInfo() {
-  var txt = S.scope==='global' ? S.books+' global bookmakers' : S.scope==='ontario' ? '33 Ontario bookmakers' : Object.keys(FAV).length+' favorite(s)';
+  var favCount = Object.keys(FAV).length;
+  var activeCount = 0;
+  for (var i=0;i<BM_DATA.length;i++){if(ACTIVE_BM[BM_DATA[i].k]!==false)activeCount++;}
+  var txt = S.scope==='global' ? activeCount+' global bookmakers' :
+            S.scope==='ontario' ? '33 Ontario bookmakers' :
+            favCount+' favorite(s)';
   elSet('scope-info', txt+' - '+S.games+' events');
 }
 
@@ -1829,8 +1846,34 @@ function renderBooks() {
   grid.innerHTML=html;
 }
 
-function togFav(k){if(FAV[k])delete FAV[k];else FAV[k]=true;try{localStorage.setItem('sbfav',JSON.stringify(FAV));}catch(e){}renderBooks();redetect();}
-function togActive(k){ACTIVE_BM[k]=ACTIVE_BM[k]===false?true:false;try{localStorage.setItem('sbactive',JSON.stringify(ACTIVE_BM));}catch(e){}renderBooks();redetect();}
+function togFav(k){
+  if(FAV[k]) delete FAV[k]; else FAV[k]=true;
+  try{localStorage.setItem('sbfav',JSON.stringify(FAV));}catch(e){}
+  updBmBadge();
+  renderBooks();redetect();
+}
+function togActive(k){
+  ACTIVE_BM[k]=ACTIVE_BM[k]===false?true:false;
+  try{localStorage.setItem('sbactive',JSON.stringify(ACTIVE_BM));}catch(e){}
+  updBmBadge();
+  renderBooks();redetect();
+}
+function updBmBadge(){
+  // Update bookmakers tab badge: shows active count / total
+  var activeCount=0;
+  for(var i=0;i<BM_DATA.length;i++){if(ACTIVE_BM[BM_DATA[i].k]!==false)activeCount++;}
+  var favCount=Object.keys(FAV).length;
+  // Update scope info immediately
+  updScopeInfo();
+  // Update the bookmaker tab badge to show active count
+  var badges=document.querySelectorAll('.tab .tbadge');
+  for(var i=0;i<badges.length;i++){
+    var tab=badges[i].parentElement;
+    if(tab&&tab.getAttribute('onclick')==="goTab('books')"){
+      badges[i].textContent=activeCount+'/'+BM_DATA.length;
+    }
+  }
+}
 
 // CHARTS - reads S.roiHist etc, zero API
 function updateCharts(){
