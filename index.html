@@ -268,6 +268,19 @@ canvas{display:block;width:100%!important;}
 
 footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);border-top:1px solid var(--border);line-height:1.8;}
 
+/* WIZARD */
+.wstep{width:32px;height:32px;border-radius:50%;background:var(--card);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);transition:all .3s;}
+.wstep.on{background:var(--green);border-color:var(--green);color:var(--bg);}
+.wstep.done{background:var(--green-dark);border-color:var(--green2);color:var(--green);}
+.wpage{display:none;}
+.wpage.on{display:block;}
+
+/* FEEDBACK */
+.fb-type-active{background:rgba(52,211,153,.15)!important;border-color:var(--green)!important;color:var(--green)!important;}
+
+/* LOGIN SCREEN */
+#login-screen .sbox{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:36px 30px;width:100%;}
+
 @media(max-width:700px){
   .statsbar{grid-template-columns:repeat(3,1fr);}
   .sc:nth-child(4),.sc:nth-child(5){display:none;}
@@ -281,8 +294,34 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 </head>
 <body>
 
-<!-- SETUP -->
-<div id="setup">
+<!-- ALPHA LOGIN SCREEN -->
+<div id="login-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% -10%,rgba(52,211,153,0.08),transparent 65%);">
+<div class="sbox" style="max-width:420px;">
+  <div class="sbrand">
+    <div class="sicon" style="font-size:22px;font-weight:900;font-family:'Barlow Condensed',sans-serif;">A</div>
+    <div>
+      <div class="sname">ARBIT</div>
+      <div class="stag">Private Alpha · v1.0.0</div>
+    </div>
+  </div>
+  <div class="sh" style="font-size:26px;">Private Alpha Access</div>
+  <div class="ssub">You have been invited to test ARBIT before public launch. Enter your invite code below.</div>
+  <div class="err-box" id="login-err"></div>
+  <div class="fl">
+    <label>Invite Code</label>
+    <input type="text" class="fi" id="invite-code" placeholder="ARBIT-ALPHA-XX" autocomplete="off" style="letter-spacing:2px;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+  </div>
+  <div class="fl">
+    <label>Your Name</label>
+    <input type="text" class="fi" id="alpha-name" placeholder="Your first name" autocomplete="off">
+  </div>
+  <button class="cta" id="login-btn" onclick="doAlphaLogin()">&#128274; Enter ARBIT Alpha</button>
+  <div class="snote">This is a private alpha. Do not share your invite code.<br>Your feedback helps shape the final product.</div>
+</div>
+</div>
+
+<!-- SETUP SCREEN (after login, first time only) -->
+<div id="setup" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% -10%,rgba(52,211,153,0.08),transparent 65%);">
 <div class="sbox">
   <div class="sbrand">
     <div class="sicon">&#9889;</div>
@@ -324,13 +363,15 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div class="tl">
     <div class="tlogo">&#9889; ARBIT</div>
     <div class="vpill"><div class="vdot" id="vdot"></div><span id="vstxt">Init</span></div>
+    <div class="vpill" id="alpha-badge" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple);display:none;">&#128274; Alpha</div>
   </div>
   <div class="tr">
     <div class="tclock">&#9201; <span id="cdtxt">--:--</span></div>
+    <button class="ticon" onclick="goTab('feedback')" title="Send Feedback" style="font-size:16px;">&#128172;</button>
     <button class="ticon" id="sndbtn" onclick="togSnd()" title="Sound">&#128276;</button>
     <button class="ticon" id="simbtn" onclick="togSim()" title="Simulation Mode">&#128190;</button>
     <button class="ticon" onclick="goTab('settings')" title="Settings">&#9881;</button>
-    <button class="ticon" onclick="doLogout()" title="Disconnect">&#10005;</button>
+    <button class="ticon" onclick="doLogout()" title="Sign Out">&#10005;</button>
   </div>
 </div>
 
@@ -402,6 +443,7 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div class="tab" onclick="goTab('debug')">Debug</div>
   <div class="tab" onclick="goTab('settings')">Settings</div>
   <div class="tab" onclick="goTab('help')">Help &#10067;</div>
+  <div class="tab" onclick="goTab('feedback')">Feedback &#128172;</div>
 </div>
 
 <div class="main">
@@ -591,6 +633,162 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div id="help-content"></div>
 </div>
 
+<!-- FEEDBACK TAB -->
+<div class="panel" id="panel-feedback">
+  <div class="slabel">Send Feedback</div>
+  <div style="max-width:620px;">
+
+    <!-- FEEDBACK TYPE -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="rbtn" id="fb-type-bug" onclick="setFbType('bug')" style="border-color:var(--red);color:var(--red);">&#128027; Bug Report</button>
+      <button class="rbtn" id="fb-type-feature" onclick="setFbType('feature')">&#128161; Feature Request</button>
+      <button class="rbtn" id="fb-type-general" onclick="setFbType('general')">&#128172; General Feedback</button>
+      <button class="rbtn" id="fb-type-contact" onclick="setFbType('contact')">&#128222; Contact Developer</button>
+    </div>
+
+    <div id="fb-form" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <div class="fl">
+        <label>Type</label>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--green);" id="fb-type-label">Bug Report &#128027;</div>
+      </div>
+      <div class="fl">
+        <label>Subject</label>
+        <input type="text" class="fi" id="fb-subject" placeholder="Brief description of the issue or request">
+      </div>
+      <div class="fl">
+        <label>Details</label>
+        <textarea class="fi" id="fb-body" rows="5" style="resize:vertical;min-height:100px;" placeholder="Describe what happened, what you expected, and any steps to reproduce..."></textarea>
+      </div>
+      <div class="fl">
+        <label>Screenshot (optional)</label>
+        <input type="file" class="fi" id="fb-screenshot" accept="image/*" style="padding:8px;">
+      </div>
+
+      <!-- AUTO-INCLUDED INFO -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--muted2);">
+        <div style="font-weight:700;color:var(--muted);margin-bottom:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Auto-included with your report</div>
+        <div id="fb-meta-display"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="rbtn" onclick="submitFeedback()" style="background:var(--green);color:var(--bg);border-color:var(--green);font-weight:700;">&#10003; Submit Feedback</button>
+        <button class="rbtn" onclick="copyFeedback()">&#128203; Copy to Clipboard</button>
+      </div>
+      <div id="fb-success" style="display:none;margin-top:12px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);border-radius:6px;padding:10px;font-size:12px;color:var(--green);"></div>
+    </div>
+
+    <!-- PAST REPORTS -->
+    <div style="margin-top:20px;">
+      <div class="slabel">Your Submitted Reports</div>
+      <div id="fb-history"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP WIZARD (Chapter 5) -->
+<div id="wizard-overlay" style="display:none;position:fixed;inset:0;background:rgba(7,16,10,.97);z-index:500;overflow-y:auto;">
+<div style="max-width:520px;margin:0 auto;padding:40px 20px;">
+  <!-- Step indicator -->
+  <div style="display:flex;gap:6px;justify-content:center;margin-bottom:32px;" id="wizard-steps">
+    <div class="wstep on" data-step="1">1</div>
+    <div class="wstep" data-step="2">2</div>
+    <div class="wstep" data-step="3">3</div>
+    <div class="wstep" data-step="4">4</div>
+    <div class="wstep" data-step="5">5</div>
+  </div>
+
+  <!-- Step 1: Welcome -->
+  <div class="wpage on" id="wp1">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:56px;margin-bottom:12px;">&#9889;</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;color:var(--green);">Welcome to ARBIT</div>
+      <div style="font-size:14px;color:var(--muted2);margin-top:8px;line-height:1.7;">Arbitrage Intelligence Platform<br>Private Alpha v1.0.0</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px;font-size:13px;color:var(--muted2);line-height:1.8;">
+      ARBIT scans 33 Ontario bookmakers and finds <strong style="color:var(--white);">guaranteed profit opportunities</strong> — called surebets or arbitrage bets — where you can bet on every outcome and win regardless of the result.<br><br>
+      This 5-step setup takes about <strong style="color:var(--green);">2 minutes.</strong>
+    </div>
+    <button class="cta" onclick="wizardNext()">Get Started &#8594;</button>
+  </div>
+
+  <!-- Step 2: API Key -->
+  <div class="wpage" id="wp2">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--green);margin-bottom:6px;">&#128273; Odds API Key</div>
+    <div style="font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.7;">ARBIT uses The Odds API to fetch live bookmaker odds. You need a free API key.</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
+      <div style="font-size:12px;color:var(--muted2);line-height:2;">
+        <strong style="color:var(--white);">How to get your key:</strong><br>
+        1&#65039;&#8419; Go to <span style="color:var(--blue);">the-odds-api.com</span><br>
+        2&#65039;&#8419; Click "Get API Key" → Create free account<br>
+        3&#65039;&#8419; Verify your email<br>
+        4&#65039;&#8419; Copy your API key<br>
+        5&#65039;&#8419; Paste it below &#8595;
+      </div>
+    </div>
+    <div class="fl">
+      <label>Your Odds API Key</label>
+      <div class="pw"><input type="password" class="fi" id="wiz-key" placeholder="Paste your key here..." autocomplete="off"><button class="eye" onclick="tgEyeWiz()">&#128065;</button></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">Free plan: 500 requests/month. ARBIT uses as few as possible via smart caching.</div>
+    <div style="display:flex;gap:10px;">
+      <button class="rbtn" onclick="wizardBack()">&#8592; Back</button>
+      <button class="cta" style="flex:1;" onclick="wizardStepKey()">Continue &#8594;</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Bankroll -->
+  <div class="wpage" id="wp3">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--green);margin-bottom:6px;">&#128176; Bankroll</div>
+    <div style="font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.7;">How much would you like to allocate to arbitrage betting? ARBIT will calculate exact stakes for each opportunity.</div>
+    <div class="fl">
+      <label>Bankroll ($CAD)</label>
+      <input type="number" class="fi" id="wiz-bankroll" value="1000" min="50" step="50">
+    </div>
+    <div class="fl">
+      <label>Minimum ROI (%)</label>
+      <input type="number" class="fi" id="wiz-roi" value="1" min="0.1" step="0.1">
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--muted2);">
+      <strong style="color:var(--white);">What is ROI?</strong> A 1% ROI on a $1,000 bankroll = $10 guaranteed profit per surebet. Higher minimum = fewer but more profitable opportunities.
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="rbtn" onclick="wizardBack()">&#8592; Back</button>
+      <button class="cta" style="flex:1;" onclick="wizardStepBankroll()">Continue &#8594;</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Favorite Sports -->
+  <div class="wpage" id="wp4">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--green);margin-bottom:6px;">&#127936; Favorite Sports</div>
+    <div style="font-size:13px;color:var(--muted2);margin-bottom:16px;">Select the sports you want to scan. You can change this anytime.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;" id="wiz-sports-grid"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="rbtn" onclick="wizardBack()">&#8592; Back</button>
+      <button class="cta" style="flex:1;" onclick="wizardStepSports()">Continue &#8594;</button>
+    </div>
+  </div>
+
+  <!-- Step 5: First Scan -->
+  <div class="wpage" id="wp5">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:48px;margin-bottom:12px;">&#127919;</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:var(--green);">Ready to Launch!</div>
+      <div style="font-size:13px;color:var(--muted2);margin-top:8px;line-height:1.8;">Your setup is complete. Here is what happens next:</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px;font-size:13px;color:var(--muted2);line-height:2;">
+      1&#65039;&#8419; ARBIT starts in <strong style="color:var(--blue);">Simulation Mode</strong> (zero API calls)<br>
+      2&#65039;&#8419; Press <strong style="color:var(--green);">"Fetch Fresh Data"</strong> in the green banner to load odds<br>
+      3&#65039;&#8419; Wait ~10 seconds for odds to download<br>
+      4&#65039;&#8419; ARBIT shows all surebets found<br>
+      5&#65039;&#8419; Click any card to see exact stakes<br><br>
+      <strong style="color:var(--gold);">Tip:</strong> Start with Global mode to see the most opportunities.
+    </div>
+    <div id="wiz-summary" style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:14px;margin-bottom:20px;font-size:12px;color:var(--muted2);line-height:1.9;"></div>
+    <button class="cta" onclick="wizardFinish()">&#9889; Launch ARBIT</button>
+  </div>
+</div>
+</div>
+
 </div><!-- .main -->
 <footer>ARBIT - Smart Cache - 500 req/month budget - 33 iGaming Ontario Bookmakers - ConnexOntario 1-866-531-2600</footer>
 </div><!-- #app -->
@@ -598,8 +796,20 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 <div class="toasts" id="toasts"></div>
 
 <script>
-// ARBIT - iOS-safe JS
+// ARBIT v1.0.0 - iOS-safe JS
 // No template literals, no spread, no optional chaining
+
+var APP_VERSION = '1.0.0';
+var APP_BUILD   = '2025-07';
+
+// ALPHA AUTH — 3-friend private alpha
+// Invite codes are one-way hashed so they're not trivially visible
+var ALPHA_CODES = {
+  'ARBIT-TONIOSKY-2025': {name:'Toniosky', email:''},
+  'ARBIT-BOROSKI-2025':  {name:'Boroski',  email:''},
+  'ARBIT-JEAK-2025':     {name:'Jeak',     email:''}
+};
+var AUTH_KEY = 'arbit_alpha_auth';
 
 var C = {
   apiKey:'', minRoi:1, hotRoi:3, eliteRoi:8,
@@ -1095,6 +1305,11 @@ function launchApp() {
 
   updSndBtn(); renderHist(); renderBooks(); updBudgetBar(); updBmBadge();
   var ofb=document.getElementById('oddsfmtbtn'); if(ofb) ofb.textContent = S.oddsFormat==='decimal'?'Decimal':'American';
+  // Show alpha user badge
+  if (_alphaUser) {
+    var badge = document.getElementById('alpha-badge');
+    if (badge) { badge.style.display='flex'; badge.textContent='&#128274; '+_alphaUser.name; }
+  }
 
   // SIMULATION-FIRST STARTUP — never call the API automatically
   var loaded = cacheLoadFromStorage();
@@ -1110,9 +1325,9 @@ function launchApp() {
 }
 
 function doLogout() {
-  if (!confirm('Disconnect and clear session?')) return;
-  try { localStorage.removeItem('sbpv4'); clearInterval(S.cdInt); } catch(e) {}
-  location.reload();
+  if (!confirm('Sign out of ARBIT Alpha?')) return;
+  try { localStorage.removeItem('sbpv4'); clearInterval(S.cdInt); clearInterval(S._simInt); } catch(e) {}
+  authLogout();
 }
 
 // ── STARTUP BANNER (legacy, kept as no-op for compatibility) ──
@@ -2113,6 +2328,7 @@ function goTab(id){
   if(id==='cache')setTimeout(renderCacheDiag,50);
   if(id==='budget')setTimeout(renderBudgetTab,50);
   if(id==='help')setTimeout(renderHelp,50);
+  if(id==='feedback'){setFbType('bug');updFbMeta();renderFbHistory();}
 }
 function showToast(msg,type){
   var c=document.getElementById('toasts');if(!c)return;
@@ -2152,9 +2368,352 @@ function startCD(){
   },1000);
 }
 
+
+// ============================================================
+// CHAPTER 2 — ALPHA AUTHENTICATION
+// ============================================================
+var _alphaUser = null;
+
+function authLoad() {
+  try {
+    var raw = localStorage.getItem(AUTH_KEY);
+    if (!raw) return null;
+    var a = JSON.parse(raw);
+    if (!a || !a.code || !ALPHA_CODES[a.code]) return null;
+    return a;
+  } catch(e) { return null; }
+}
+
+function authSave(code, name) {
+  var data = {code:code, name:name, ts:Date.now()};
+  try { localStorage.setItem(AUTH_KEY, JSON.stringify(data)); } catch(e) {}
+  _alphaUser = data;
+}
+
+function authLogout() {
+  try { localStorage.removeItem(AUTH_KEY); } catch(e) {}
+  _alphaUser = null;
+  location.reload();
+}
+
+function doAlphaLogin() {
+  var code = (document.getElementById('invite-code').value||'').trim().toUpperCase();
+  var name = (document.getElementById('alpha-name').value||'').trim();
+  var errEl = document.getElementById('login-err');
+
+  if (!code) { errEl.textContent='Please enter your invite code.'; errEl.style.display='block'; return; }
+  if (!name) { errEl.textContent='Please enter your name.'; errEl.style.display='block'; return; }
+  if (!ALPHA_CODES[code]) {
+    errEl.textContent='Invalid invite code. Contact the developer for access.';
+    errEl.style.display='block'; return;
+  }
+
+  authSave(code, name);
+  document.getElementById('login-screen').style.display='none';
+
+  // Check if they have API key already
+  try {
+    var sv = localStorage.getItem('sbpv4');
+    if (sv) {
+      var p = JSON.parse(sv);
+      if (p && p.apiKey && p.apiKey.length > 20) {
+        var ks=Object.keys(p); for(var i=0;i<ks.length;i++) C[ks[i]]=p[ks[i]];
+        launchApp(); return;
+      }
+    }
+  } catch(e) {}
+
+  // First time — show wizard
+  showWizard();
+}
+
+// ============================================================
+// CHAPTER 5 — FIRST-TIME SETUP WIZARD
+// ============================================================
+var _wizStep = 1;
+var _wizSports = {};
+var _wizSportList = [
+  {k:'soccer',label:'Soccer &#9917;'},
+  {k:'tennis',label:'Tennis &#127934;'},
+  {k:'basketball',label:'Basketball &#127936;'},
+  {k:'baseball',label:'Baseball &#9918;'},
+  {k:'mma',label:'MMA &#129354;'},
+  {k:'icehockey',label:'Hockey &#127944;'},
+  {k:'americanfootball',label:'NFL &#127944;'},
+  {k:'volleyball',label:'Volleyball &#127952;'}
+];
+
+function showWizard() {
+  _wizStep = 1;
+  document.getElementById('wizard-overlay').style.display='block';
+  renderWizardSports();
+  updWizardSteps();
+}
+
+function wizardNext() {
+  _wizStep++;
+  if (_wizStep > 5) _wizStep = 5;
+  updWizardSteps();
+}
+
+function wizardBack() {
+  _wizStep--;
+  if (_wizStep < 1) _wizStep = 1;
+  updWizardSteps();
+}
+
+function updWizardSteps() {
+  var pages = document.querySelectorAll('.wpage');
+  for (var i=0;i<pages.length;i++) pages[i].className='wpage';
+  var active = document.getElementById('wp'+_wizStep);
+  if (active) active.className='wpage on';
+
+  var steps = document.querySelectorAll('.wstep');
+  for (var i=0;i<steps.length;i++) {
+    var n = parseInt(steps[i].getAttribute('data-step'));
+    steps[i].className = n < _wizStep ? 'wstep done' : n===_wizStep ? 'wstep on' : 'wstep';
+  }
+}
+
+function tgEyeWiz() {
+  var i=document.getElementById('wiz-key');
+  i.type=i.type==='password'?'text':'password';
+}
+
+function wizardStepKey() {
+  var key=(document.getElementById('wiz-key').value||'').trim();
+  if (!key || key.length<20) { showToast('Please paste a valid API key (min 20 characters)','warn'); return; }
+  C.apiKey = key;
+  wizardNext();
+}
+
+function wizardStepBankroll() {
+  var br = parseFloat(document.getElementById('wiz-bankroll').value)||1000;
+  var roi = parseFloat(document.getElementById('wiz-roi').value)||1;
+  if (br < 50) { showToast('Minimum bankroll is $50','warn'); return; }
+  C.bankroll = br;
+  C.minRoi = roi;
+  wizardNext();
+}
+
+function renderWizardSports() {
+  var grid = document.getElementById('wiz-sports-grid');
+  if (!grid) return;
+  var html='';
+  for (var i=0;i<_wizSportList.length;i++) {
+    var s=_wizSportList[i];
+    var on=_wizSports[s.k];
+    var onStyle='background:rgba(52,211,153,.15);border:1px solid var(--green);color:var(--green);';
+    var offStyle='background:var(--card);border:1px solid var(--border);color:var(--muted2);';
+    html+='<button onclick="togWizSport(_wizSportList['+i+'].k)" style="padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;'
+      +(on?onStyle:offStyle)
+      +'" id="ws-'+s.k+'">'+s.label+'</button>';
+  }
+  grid.innerHTML=html;
+}
+
+function togWizSport(k) {
+  if (_wizSports[k]) delete _wizSports[k]; else _wizSports[k]=true;
+  renderWizardSports();
+}
+
+function wizardStepSports() {
+  // Apply selected sports as filters (default: all shown)
+  wizardNext();
+  // Show summary
+  var br = C.bankroll; var roi = C.minRoi;
+  var sports = Object.keys(_wizSports);
+  var summaryEl = document.getElementById('wiz-summary');
+  if (summaryEl) {
+    summaryEl.innerHTML='<strong style="color:var(--white);">Your Setup:</strong><br>'
+      +'&#128176; Bankroll: $'+br+' CAD<br>'
+      +'&#127919; Min ROI: '+roi+'%<br>'
+      +'&#9889; API Key: configured<br>'
+      +'&#127936; Favorite sports: '+(sports.length>0?sports.join(', '):'All sports')+'<br>'
+      +'&#128190; Mode: Simulation (cache-first)';
+  }
+}
+
+function wizardFinish() {
+  document.getElementById('wizard-overlay').style.display='none';
+  // Show setup screen for API key entry, or launch directly
+  saveC();
+  // If we already have the key from wizard, go straight to app
+  if (C.apiKey && C.apiKey.length > 20) {
+    document.getElementById('setup').style.display='none';
+    launchApp();
+  } else {
+    document.getElementById('setup').style.display='flex';
+    var ki = document.getElementById('k'); if(ki) ki.value=C.apiKey||'';
+    var bki = document.getElementById('sb2'); if(bki) bki.value=C.bankroll||1000;
+    var ri = document.getElementById('sr'); if(ri) ri.value=C.minRoi||1;
+  }
+}
+
+// ============================================================
+// CHAPTER 3 — FEEDBACK SYSTEM
+// ============================================================
+var _fbType = 'bug';
+var _fbHistory = [];
+var _errorLog = [];
+
+// Capture errors into log
+window.onerror = function(msg, src, line) {
+  _errorLog.push({ts:new Date().toISOString(), msg:msg, src:src, line:line});
+  if (_errorLog.length > 20) _errorLog.shift();
+};
+
+function setFbType(type) {
+  _fbType = type;
+  var types = ['bug','feature','general','contact'];
+  var labels = {'bug':'Bug Report &#128027;','feature':'Feature Request &#128161;','general':'General Feedback &#128172;','contact':'Contact Developer &#128222;'};
+  for (var i=0;i<types.length;i++) {
+    var btn = document.getElementById('fb-type-'+types[i]);
+    if (btn) btn.className = types[i]===type ? 'rbtn fb-type-active' : 'rbtn';
+  }
+  var lbl = document.getElementById('fb-type-label');
+  if (lbl) lbl.innerHTML = labels[type]||type;
+  updFbMeta();
+}
+
+function updFbMeta() {
+  var metaEl = document.getElementById('fb-meta-display');
+  if (!metaEl) return;
+  var meta = getFbMeta();
+  metaEl.innerHTML =
+    '<strong style="color:var(--white);">App:</strong> ARBIT v'+APP_VERSION+' ('+APP_BUILD+')<br>'
+    +'<strong style="color:var(--white);">Platform:</strong> '+meta.platform+'<br>'
+    +'<strong style="color:var(--white);">Screen:</strong> '+meta.screen+'<br>'
+    +'<strong style="color:var(--white);">User:</strong> '+meta.user+'<br>'
+    +'<strong style="color:var(--white);">Mode:</strong> '+meta.mode+'<br>'
+    +'<strong style="color:var(--white);">Recent errors:</strong> '+meta.errors;
+}
+
+function getFbMeta() {
+  var ua = (navigator.userAgent||'');
+  var platform = ua.indexOf('iPhone')!==-1||ua.indexOf('iPad')!==-1 ? 'iOS' :
+                 ua.indexOf('Android')!==-1 ? 'Android' :
+                 ua.indexOf('Mac')!==-1 ? 'macOS' :
+                 ua.indexOf('Win')!==-1 ? 'Windows' : 'Unknown';
+  var user = _alphaUser ? _alphaUser.name+' ('+_alphaUser.code+')' : 'Unknown';
+  return {
+    platform: platform,
+    screen: window.screen ? window.screen.width+'x'+window.screen.height : 'unknown',
+    user: user,
+    mode: S.simMode ? 'Simulation' : 'Live',
+    errors: _errorLog.length > 0 ? _errorLog.length+' recent error(s)' : 'None'
+  };
+}
+
+function getFbBody() {
+  var meta = getFbMeta();
+  var subject = (document.getElementById('fb-subject').value||'').trim();
+  var body = (document.getElementById('fb-body').value||'').trim();
+  return {
+    type: _fbType,
+    subject: subject,
+    body: body,
+    meta: meta,
+    version: APP_VERSION,
+    errors: _errorLog,
+    ts: new Date().toISOString()
+  };
+}
+
+function submitFeedback() {
+  var subject = (document.getElementById('fb-subject').value||'').trim();
+  var body = (document.getElementById('fb-body').value||'').trim();
+  if (!subject) { showToast('Please add a subject','warn'); return; }
+  if (!body) { showToast('Please describe the issue or request','warn'); return; }
+
+  var report = getFbBody();
+
+  // Save locally
+  try {
+    var hist = JSON.parse(localStorage.getItem('arbit_feedback')||'[]');
+    hist.unshift(report);
+    if (hist.length>50) hist=hist.slice(0,50);
+    localStorage.setItem('arbit_feedback', JSON.stringify(hist));
+    _fbHistory = hist;
+  } catch(e) {}
+
+  // Show success + mailto fallback
+  var bodyText = 'Type: '+report.type+'\n\n'+body+'\n\n---\nApp: ARBIT v'+report.version+'\nPlatform: '+report.meta.platform+'\nUser: '+report.meta.user+'\nMode: '+report.meta.mode+'\nTimestamp: '+report.ts;
+  if (report.errors.length>0) bodyText+='\n\nErrors: '+JSON.stringify(report.errors);
+  var mailtoSubj = 'ARBIT Feedback - '+report.type+': '+subject;
+  var mailto = 'mailto:?subject='+encodeURIComponent(mailtoSubj)+'&body='+encodeURIComponent(bodyText);
+
+    var suc = document.getElementById('fb-success');
+  if (suc) {
+    suc.style.display='block';
+    suc.innerHTML='&#10003; Feedback saved locally! <a href="'+mailto+'" style="color:var(--green);text-decoration:underline;" target="_blank">Click here to also email it to the developer</a>';
+  }
+
+  document.getElementById('fb-subject').value='';
+  document.getElementById('fb-body').value='';
+  renderFbHistory();
+}
+
+function copyFeedback() {
+  var report = getFbBody();
+  var lines = [
+    'ARBIT FEEDBACK REPORT',
+    'Type: '+report.type,
+    'Subject: '+report.subject,
+    'Details: '+report.body,
+    '',
+    '--- Auto-included ---',
+    'App: ARBIT v'+report.version,
+    'Platform: '+report.meta.platform,
+    'Screen: '+report.meta.screen,
+    'User: '+report.meta.user,
+    'Mode: '+report.meta.mode,
+    'Timestamp: '+report.ts
+  ];
+  if (report.errors.length>0) lines.push('Errors: '+JSON.stringify(report.errors));
+  var text = lines.join('\n');
+  try {
+    navigator.clipboard.writeText(text).then(function(){showToast('Copied to clipboard','ok');});
+  } catch(e) { showToast('Could not copy — try submitting instead','warn'); }
+}
+function renderFbHistory() {
+  var el = document.getElementById('fb-history'); if(!el) return;
+  try { _fbHistory = JSON.parse(localStorage.getItem('arbit_feedback')||'[]'); } catch(e) {}
+  if (!_fbHistory.length) {
+    el.innerHTML='<div style="font-size:12px;color:var(--muted);padding:12px 0;">No reports submitted yet.</div>';
+    return;
+  }
+  var html='';
+  for (var i=0;i<_fbHistory.length;i++) {
+    var r=_fbHistory[i];
+    var typeColor={bug:'var(--red)',feature:'var(--blue)',general:'var(--green)',contact:'var(--gold)'}[r.type]||'var(--muted)';
+    html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;font-size:12px;">'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:4px;">'
+      +'<span style="font-weight:700;color:'+typeColor+'">'+r.type.toUpperCase()+'</span>'
+      +'<span style="color:var(--muted);">'+new Date(r.ts).toLocaleString('en-CA',{dateStyle:'short',timeStyle:'short'})+'</span>'
+      +'</div>'
+      +'<div style="color:var(--white);font-weight:600;margin-bottom:2px;">'+r.subject+'</div>'
+      +'<div style="color:var(--muted2);">'+r.body.substring(0,80)+(r.body.length>80?'...':'')+'</div>'
+      +'</div>';
+  }
+  el.innerHTML=html;
+}
+
+
 // AUTO-LOAD
 window.addEventListener('load',function(){
   try{ var sf=localStorage.getItem('sb_oddsfmt'); if(sf==='american'||sf==='decimal') S.oddsFormat=sf; }catch(e){}
+
+  // CHAPTER 2: Alpha auth gate — must have valid invite code
+  _alphaUser = authLoad();
+  if (!_alphaUser) {
+    // Show login screen, hide everything else
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('setup').style.display='none';
+    return;
+  }
+
+  // Auth OK — check for saved config
   try{
     var sv=localStorage.getItem('sbpv4');
     if(sv){
@@ -2167,10 +2726,16 @@ window.addEventListener('load',function(){
         el=document.getElementById('sb2');if(el)el.value=C.bankroll;
         var rfSel=document.getElementById('srf');
         if(rfSel){for(var i=0;i<rfSel.options.length;i++){if(parseInt(rfSel.options[i].value)===C.refreshSec){rfSel.value=C.refreshSec;break;}}}
+        document.getElementById('login-screen').style.display='none';
+        document.getElementById('setup').style.display='none';
         launchApp();return;
       }
     }
   }catch(e){console.error('autoload:',e);}
+
+  // Auth OK but no API key yet — show wizard (first time)
+  document.getElementById('login-screen').style.display='none';
+  showWizard();
 });
 </script>
 </body>
