@@ -2424,7 +2424,7 @@ function doAlphaLogin() {
     }
   } catch(e) {}
 
-  // First time — show wizard
+  // First time — show wizard (wizard is position:fixed so visible without #app)
   showWizard();
 }
 
@@ -2537,17 +2537,18 @@ function wizardStepSports() {
 
 function wizardFinish() {
   document.getElementById('wizard-overlay').style.display='none';
-  // Show setup screen for API key entry, or launch directly
   saveC();
-  // If we already have the key from wizard, go straight to app
   if (C.apiKey && C.apiKey.length > 20) {
+    // API key entered in wizard — go straight to app
     document.getElementById('setup').style.display='none';
     launchApp();
   } else {
-    document.getElementById('setup').style.display='flex';
-    var ki = document.getElementById('k'); if(ki) ki.value=C.apiKey||'';
-    var bki = document.getElementById('sb2'); if(bki) bki.value=C.bankroll||1000;
-    var ri = document.getElementById('sr'); if(ri) ri.value=C.minRoi||1;
+    // No API key yet — show the setup screen (not black)
+    var setupEl = document.getElementById('setup');
+    if (setupEl) { setupEl.style.display='flex'; }
+    var ki=document.getElementById('k'); if(ki) ki.value='';
+    var bki=document.getElementById('sb2'); if(bki) bki.value=C.bankroll||1000;
+    var ri=document.getElementById('sr'); if(ri) ri.value=C.minRoi||1;
   }
 }
 
